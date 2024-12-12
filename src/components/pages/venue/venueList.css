@@ -1,0 +1,34 @@
+.fp {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+  }
+  
+  .fpItem {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    max-width: 300px;
+    text-align: justify; /* Added this to justify text inside each item */
+    background-color: #f9f9f9;
+  }
+  
+  .fpImg {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .fpName, .fpCity, .fpOccasion, .fpCapacity, .fpPayments, .fpDescription {
+    display: block;
+    margin: 8px 0;
+    text-align: justify; /* Ensure each piece of text is justified */
+  }
+  
+  .fpCity, .fpCapacity, .fpPayments {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
