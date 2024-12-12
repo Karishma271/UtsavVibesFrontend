@@ -1,8 +1,8 @@
 {
-    "build": {
-      "env": {
-        "NODE_VERSION": "22.x"
-      }
+  "build": {
+    "env": {
+      "NODE_VERSION": "22.x",
+      "REACT_APP_API_URL": "https://utsavvibesbackend.onrender.com"
     }
   }
-  
+}
