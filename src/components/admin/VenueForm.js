@@ -25,7 +25,7 @@ const VenueForm = () => {
   useEffect(() => {
     if (id) {
       axios
-        .get(`/api/venues/${id}`)
+        .get(`https://utsavvibesbackend.onrender.com/api/venues/${id}`)
         .then((response) => {
           setFormData(response.data);
           setIsUpdateMode(true);
@@ -74,16 +74,16 @@ const VenueForm = () => {
       if (imageFile) {
         const imageData = new FormData();
         imageData.append('image', imageFile);
-        const imageResponse = await axios.post('/api/upload-image', imageData);
+        const imageResponse = await axios.post('https://utsavvibesbackend.onrender.com/api/upload-image', imageData);
         imageUrl = imageResponse.data.imageUrl;
       }
 
       const updatedData = { ...formData, imageUrl };
 
       if (isUpdateMode) {
-        await axios.put(`/api/venues/${id}`, updatedData);
+        await axios.put(`https://utsavvibesbackend.onrender.com/api/venues/${id}`, updatedData);
       } else {
-        await axios.post('/api/venues', updatedData);
+        await axios.post('https://utsavvibesbackend.onrender.com/api/venues', updatedData);
       }
 
       navigate('/venues');

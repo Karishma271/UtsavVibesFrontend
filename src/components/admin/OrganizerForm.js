@@ -19,7 +19,7 @@ const OrganizerForm = () => {
   useEffect(() => {
     if (id) {
       axios
-        .get(`/api/organizers/${id}`)
+        .get(`https://utsavvibesbackend.onrender.com/api/organizers/${id}`) // Updated with live backend URL
         .then((response) => {
           setFormData(response.data);
         })
@@ -39,8 +39,8 @@ const OrganizerForm = () => {
     e.preventDefault();
 
     const apiRequest = id
-      ? axios.put(`/api/organizers/${id}`, formData) 
-      : axios.post("/api/organizers", formData); 
+      ? axios.put(`https://utsavvibesbackend.onrender.com/api/organizers/${id}`, formData) // Updated with live backend URL
+      : axios.post("https://utsavvibesbackend.onrender.com/api/organizers", formData); // Updated with live backend URL
 
     apiRequest
       .then(() => navigate("/Organizers"))

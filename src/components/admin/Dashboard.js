@@ -10,13 +10,13 @@ const Dashboard = () => {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
 
   useEffect(() => {
-    axios.get("/api/users/count").then((res) => setUserCount(res.data.count));
-    axios.get("/api/venue/count")
-    .then((res) => setVenueCount(res.data.count))
-    
-    axios
-      .get("/api/organizer/count")
-      .then((res) => setOrganizerCount(res.data.count));
+    // Set the live backend URL
+    const apiUrl = "https://utsavvibesbackend.onrender.com/api";  // Live backend URL
+
+    // Fetch data from the backend
+    axios.get(`${apiUrl}/users/count`).then((res) => setUserCount(res.data.count));
+    axios.get(`${apiUrl}/venue/count`).then((res) => setVenueCount(res.data.count));
+    axios.get(`${apiUrl}/organizer/count`).then((res) => setOrganizerCount(res.data.count));
 
     // Simulated upcoming events
     const events = [

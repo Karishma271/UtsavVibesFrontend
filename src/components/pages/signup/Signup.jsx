@@ -10,8 +10,8 @@ import {
   CssBaseline,
   Avatar,
 } from "@mui/material";
-import bcrypt from "bcryptjs";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import bcrypt from "bcryptjs";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -78,7 +78,7 @@ const Signup = () => {
       };
 
       try {
-        const response = await fetch("/api/signup", {
+        const response = await fetch('https://utsavvibesbackend.onrender.com/api/signup', {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

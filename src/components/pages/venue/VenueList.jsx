@@ -9,14 +9,16 @@ import PaymentIcon from '@mui/icons-material/Payment';
 
 const VenueList = () => {
   const [venues, setVenues] = useState([]);
+  const [error, setError] = useState(null); // Track error
 
   useEffect(() => {
-    // Fetch venues from your API
+    // Fetch venues from your live backend API
     const fetchVenues = async () => {
       try {
-        const response = await axios.get('/api/venues');
-        setVenues(response.data);
+        const response = await axios.get('https://utsavvibesbackend.onrender.com/api/venues'); // Updated with live link
+        setVenues(response.data); // Set the venue data from the response
       } catch (error) {
+        setError('Error loading venue data. Please try again later.');
         console.error('Error loading Venue data:', error);
       }
     };
@@ -30,6 +32,7 @@ const VenueList = () => {
         Venues
       </Typography>
       <div className="fp">
+        {error && <Typography color="error">{error}</Typography>} {/* Display error message */}
         {venues.length > 0 ? (
           venues.map((venue) => (
             <div className="fpItem" key={venue._id}>

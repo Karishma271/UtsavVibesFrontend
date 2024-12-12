@@ -3,7 +3,7 @@
 .homepage {
     font-family: Arial, sans-serif;
     text-align: center;
-    padding: 20px;
+    padding: 20px 40px; /* Adjusting padding for better spacing */
 }
 
 .homeSection {
@@ -11,8 +11,8 @@
     padding: 20px;
     background-color: rgba(255, 153, 51, 0.25); /* Light Saffron */
     border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow */
+    width: 30%; /* Adjusted for better balance */
     justify-content: space-between;
     gap: 20px;
 }
@@ -23,7 +23,7 @@
 }
 
 .homeSection p {
-    font-size: 0.8rem;
+    font-size: 1rem; /* Ensuring consistency */
     color: #666; /* Dark Gray */
 }
 
@@ -38,11 +38,7 @@ p {
     font-size: 18px;
 }
 
-.event {
-    margin-top: 3.5rem;
-}
-
-.venue {
+.event, .venue {
     margin-top: 3.5rem;
 }
 
@@ -60,7 +56,7 @@ h2 {
 }
 
 .homeSection {
-    width: 30%;
+    width: 30%; /* Adjusted for better balance */
 }
 
 /* Styles for smaller screens (e.g., mobile devices) */
@@ -71,13 +67,10 @@ h2 {
     }
 
     .homeSection {
-        width: 80%; /* Adjust the width as needed for your design */
-        margin-bottom: 20px; /* Add some spacing between sections */
+        width: 80%; /* Adjusted for mobile */
+        margin-bottom: 20px; /* Spacing between sections */
     }
-}
 
-/* Media query for responsiveness */
-@media (max-width: 768px) {
     .big-text {
         font-size: 28px;
     }

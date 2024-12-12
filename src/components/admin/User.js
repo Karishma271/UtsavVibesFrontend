@@ -1,4 +1,3 @@
-// Usermgmt.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './User.css';
@@ -13,7 +12,8 @@ const User = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('/api/users');
+        // Update the API URL to the live backend
+        const response = await axios.get('https://utsavvibesbackend.onrender.com/api/users');
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -25,7 +25,7 @@ const User = () => {
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to first page when search term changes
   };
 
   const indexOfLastUser = currentPage * usersPerPage;
@@ -46,7 +46,8 @@ const User = () => {
         <h1>User Management</h1>
       </header>
       <nav>
-        <TextField className='textField'
+        <TextField 
+          className='textField'
           label="Search by Names"
           type="text"
           placeholder="Search by Name"

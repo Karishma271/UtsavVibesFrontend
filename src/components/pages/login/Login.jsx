@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import { TextField, Button, Container, Grid, Paper, Typography, CssBaseline } from '@mui/material';
-import { useNavigate } from "react-router-dom";
+import { TextField, Button, Container, Box, Typography, Grid, Link, CssBaseline } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Link from '@mui/material/Link';
-import Box from '@mui/material/Box';
-
 
 const Login = () => {
   const theme = createTheme();
@@ -23,12 +20,12 @@ const Login = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async () => {
-    // Validate fields (you can add your validation logic here)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
     if (formData.username && formData.password) {
-      // Perform login using an API call
       try {
-        const response = await fetch('/api/login', {
+        const response = await fetch('https://utsavvibesbackend.onrender.com/api/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -38,26 +35,24 @@ const Login = () => {
 
         if (response.status === 200) {
           const responseData = await response.json();
-          console.log('Response Data:', responseData); // Log the responseData
+          console.log('Response Data:', responseData); // Log the response
 
           if (responseData.token && responseData.user && responseData.user.role) {
-            // Save the token to local storage or a secure location
+            // Save the token and role to localStorage
             localStorage.setItem('token', responseData.token);
-
-            // Save the user role to local storage or state
             localStorage.setItem('userRole', responseData.user.role);
 
-            // Clear the error message
+            // Clear any error messages
             setErrors('');
 
-            // Redirect based on user role
+            // Redirect based on the user's role
             if (responseData.user.role === 'user') {
-              navigate('/'); // Replace with the path for the user's dashboard
+              navigate('/'); // Redirect to user dashboard
             } else if (responseData.user.role === 'admin') {
-              navigate('/dashboard'); // Replace with the path for the admin dashboard
+              navigate('/dashboard'); // Redirect to admin dashboard
             }
 
-            // Set the success message
+            // Set success message
             setSuccessMessage('Login successful!');
           } else {
             setErrors('Invalid username or password.');
@@ -70,7 +65,7 @@ const Login = () => {
         setErrors('Login failed. Please try again.');
       }
     } else {
-      setErrors('Required all fields.');
+      setErrors('Please fill in all fields.');
     }
   };
 
@@ -78,34 +73,18 @@ const Login = () => {
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          {/* <Box
-                        component="img"
-                        sx={{ height: 40, display: { xs: 'none', md: 'flex' }, mr: 1 }}
-                        alt="Logo"
-                        src={logo}
-                    /> */}
-          {/* <img src="logo-nobg.svg" alt="Logo" className="logo" /> */}
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
+        <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Typography component="h1" variant="h5">Sign in</Typography>
           <Box noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
               fullWidth
               id="username"
-              value={formData.username}
-              onChange={handleInputChange}
               label="Username"
               name="username"
+              value={formData.username}
+              onChange={handleInputChange}
               autoComplete="username"
               autoFocus
             />
@@ -113,12 +92,12 @@ const Login = () => {
               margin="normal"
               required
               fullWidth
+              id="password"
+              label="Password"
+              name="password"
               value={formData.password}
               onChange={handleInputChange}
-              name="password"
-              label="Password"
               type="password"
-              id="password"
               autoComplete="current-password"
             />
             <Button
@@ -140,11 +119,10 @@ const Login = () => {
                 {successMessage}
               </Typography>
             )}
-            <br />
             <Grid container>
-              <Grid item >
-                <Link style={{ cursor: 'pointer' }} onClick={()=>{navigate('/signup')}} variant="body2">
-                  {"Don't have an account? Sign Up"} 
+              <Grid item>
+                <Link style={{ cursor: 'pointer' }} onClick={() => navigate('/signup')} variant="body2">
+                  {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
             </Grid>

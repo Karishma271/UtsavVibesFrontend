@@ -14,7 +14,8 @@ const Venue = () => {
 
   const fetchVenues = async () => {
     try {
-      const response = await axios.get('/api/venues');
+      // Update the API URL to the live backend
+      const response = await axios.get('https://utsavvibesbackend.onrender.com/api/venues');
       console.log('Fetched Venues:', response.data); // Add debugging logs
       setVenues(response.data);
     } catch (error) {
@@ -22,11 +23,8 @@ const Venue = () => {
     }
   };
 
-  
-
   return (
     <div className="venue-page-container">
-      
       <VenueList venues={venues} />
     </div>
   );

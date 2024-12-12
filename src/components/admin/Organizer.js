@@ -14,7 +14,7 @@ const Organizer = () => {
 
   const fetchOrganizers = async () => {
     try {
-      const response = await axios.get('/api/organizers');
+      const response = await axios.get('https://utsavvibesbackend.onrender.com/api/organizers'); // Updated backend URL
       console.log('Fetched Organizers:', response.data); // Add debugging logs
       setOrganizers(response.data);
     } catch (error) {
@@ -22,11 +22,8 @@ const Organizer = () => {
     }
   };
 
-  
-
   return (
     <div className="organizer-page-container">
-      
       <OrganizerList organizers={organizers} />
     </div>
   );
