@@ -15,6 +15,12 @@ const Login = () => {
   const navigate = useNavigate();
 
   // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle submit action
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
