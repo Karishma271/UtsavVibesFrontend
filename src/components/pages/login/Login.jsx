@@ -46,7 +46,7 @@ const Login = () => {
 
       
       const responseData = await response.json();
-      setLoading(false); // Stop loading after response
+console.log('Response Data:', responseData);  
 
       if (response.ok) {
         // Check if token is present in response data
