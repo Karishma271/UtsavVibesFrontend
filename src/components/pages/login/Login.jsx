@@ -35,13 +35,14 @@ const Login = () => {
     // Set loading state
     setLoading(true);
 
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/login`, {
-      method: 'POST',
+    const response = await fetch("https://utsavvibesbackend.onrender.com/api/login", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData), // Check this: { username, password }
+      body: JSON.stringify(formData),
     });
+
 
       const responseData = await response.json();
 
