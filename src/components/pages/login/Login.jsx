@@ -1,136 +1,187 @@
-import React, { useState } from 'react';
-import { TextField, Button, Container, Box, Typography, Grid, Link, CssBaseline } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import React, { useState } from "react";
+import { TextField, Button, Grid, Typography, Snackbar, Alert } from "@mui/material";
+import "./contact.css";
 
-const Login = () => {
-  const theme = createTheme();
+const ContactForm = () => {
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+    name: "",
+    email: "",
+    message: "",
+    phoneNumber: "",
+    subject: "",
   });
 
-  const [errors, setErrors] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    phoneNumber: "",
+    subject: "",
+    message: "",
+  });
 
-  const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState(false);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" }); // Clear previous error on change
   };
 
-  const handleSubmit = async (e) => {
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = { name: "", email: "", phoneNumber: "", subject: "", message: "" };
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+      isValid = false;
+    } else if (!/^[a-zA-Z ]+$/.test(formData.name.trim())) {
+      newErrors.name = "Name should contain only alphabets and spaces";
+      isValid = false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim() || !emailRegex.test(formData.email)) {
+      newErrors.email = "Invalid email address";
+      isValid = false;
+    }
+
+    const phoneRegex = /^\d{10}$/; // Assuming a 10-digit phone number
+    if (!formData.phoneNumber.trim() || !phoneRegex.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = "Invalid phone number";
+      isValid = false;
+    }
+
+    if (!formData.subject.trim()) {
+      newErrors.subject = "Subject is required";
+      isValid = false;
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (formData.username && formData.password) {
-      try {
-        const response = await fetch('https://utsavvibesbackend.onrender.com/api/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
 
-        if (response.status === 200) {
-          const responseData = await response.json();
-          console.log('Response Data:', responseData); // Log the response
-
-          if (responseData.token && responseData.user && responseData.user.role) {
-            // Save the token and role to localStorage
-            localStorage.setItem('token', responseData.token);
-            localStorage.setItem('userRole', responseData.user.role);
-
-            // Clear any error messages
-            setErrors('');
-
-            // Redirect based on the user's role
-            if (responseData.user.role === 'user') {
-              navigate('/'); // Redirect to user dashboard
-            } else if (responseData.user.role === 'admin') {
-              navigate('/dashboard'); // Redirect to admin dashboard
-            }
-
-            // Set success message
-            setSuccessMessage('Login successful!');
-          } else {
-            setErrors('Invalid username or password.');
-          }
-        } else {
-          setErrors('Invalid username or password.');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        setErrors('Login failed. Please try again.');
-      }
+    if (validateForm()) {
+      console.log("Form Data Submitted: ", formData);
+      setSuccessMessage(true);
+      setFormData({
+        name: "",
+        email: "",
+        message: "",
+        phoneNumber: "",
+        subject: "",
+      });
     } else {
-      setErrors('Please fill in all fields.');
+      console.log("Form has errors. Please fix them.");
     }
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Typography component="h1" variant="h5">Sign in</Typography>
-          <Box noValidate sx={{ mt: 1 }}>
+    <div className="container">
+      <Typography textAlign="center" variant="h4" fontSize="2.5rem" gutterBottom>
+        Contact Us
+      </Typography>
+      <form onSubmit={handleSubmit}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
             <TextField
-              margin="normal"
-              required
+              label="Name"
+              name="name"
               fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              autoComplete="username"
-              autoFocus
+              required
+              variant="outlined"
+              value={formData.name}
+              onChange={handleChange}
+              error={!!errors.name}
+              helperText={errors.name}
             />
+          </Grid>
+          <Grid item xs={12} sm={6}>
             <TextField
-              margin="normal"
+              label="Phone Number"
+              name="phoneNumber"
+              fullWidth
               required
-              fullWidth
-              id="password"
-              label="Password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              type="password"
-              autoComplete="current-password"
+              variant="outlined"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              error={!!errors.phoneNumber}
+              helperText={errors.phoneNumber}
             />
-            <Button
-              type="submit"
-              onClick={handleSubmit}
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Email"
+              name="email"
               fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-            {errors && (
-              <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-                {errors}
-              </Typography>
-            )}
-            {successMessage && (
-              <Typography variant="body2" color="success" sx={{ mt: 1 }}>
-                {successMessage}
-              </Typography>
-            )}
-            <Grid container>
-              <Grid item>
-                <Link style={{ cursor: 'pointer' }} onClick={() => navigate('/signup')} variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-      </Container>
-    </ThemeProvider>
+              required
+              variant="outlined"
+              value={formData.email}
+              onChange={handleChange}
+              error={!!errors.email}
+              helperText={errors.email}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Subject"
+              name="subject"
+              fullWidth
+              required
+              variant="outlined"
+              value={formData.subject}
+              onChange={handleChange}
+              error={!!errors.subject}
+              helperText={errors.subject}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Message"
+              name="message"
+              fullWidth
+              required
+              variant="outlined"
+              multiline
+              rows={4}
+              value={formData.message}
+              onChange={handleChange}
+              error={!!errors.message}
+              helperText={errors.message}
+            />
+          </Grid>
+        </Grid>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          size="large"
+          style={{ marginTop: "16px" }}
+          fullWidth
+        >
+          Submit
+        </Button>
+      </form>
+
+      {/* Success Snackbar */}
+      <Snackbar
+        open={successMessage}
+        autoHideDuration={3000}
+        onClose={() => setSuccessMessage(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert severity="success" onClose={() => setSuccessMessage(false)}>
+          Form submitted successfully!
+        </Alert>
+      </Snackbar>
+    </div>
   );
 };
 
-export default Login;
+export default ContactForm;

@@ -6,6 +6,9 @@ import "./OrganizerList.css";
 const OrganizerList = ({ organizers }) => {
   const navigate = useNavigate();
 
+  // Fetch Backend URL from Environment Variable
+  const apiUrl = process.env.REACT_APP_BACKEND_URL;
+
   const handleEdit = (id) => {
     navigate(`/Organizers/edit/${id}`); // Redirect to Edit Organizer form
   };
@@ -14,16 +17,16 @@ const OrganizerList = ({ organizers }) => {
     if (window.confirm("Are you sure you want to delete this organizer?")) {
       try {
         // Make DELETE request to backend
-        await axios.delete(`https://utsavvibesbackend.onrender.com/api/organizers/${id}`);
+        await axios.delete(`${apiUrl}/api/organizers/${id}`);
         window.location.reload(); // Refresh the page after deletion
       } catch (error) {
-        console.error("Error deleting organizer:", error);
+        console.error("Error deleting organizer:", error.message || error);
       }
     }
   };
 
   const handleAdd = () => {
-    navigate('/Organizers/new');  // Redirect to Add Organizer form
+    navigate("/Organizers/new"); // Redirect to Add Organizer form
   };
 
   return (

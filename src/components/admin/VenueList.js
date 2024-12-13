@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./VenueList.css";
 
-const VenueList = ({ venues }) => {
+const VenueList = ({ venues, setVenues }) => {
+  const [deletingId, setDeletingId] = useState(null); // Track deletion state
   const navigate = useNavigate();
 
   const handleEdit = (id) => {
@@ -13,16 +14,23 @@ const VenueList = ({ venues }) => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this venue?")) {
       try {
-        await axios.delete(`https://utsavvibesbackend.onrender.com/api/venues/${id}`); // Use live backend API
-        window.location.reload(); // Refresh the page
+        setDeletingId(id); // Set deleting state
+        await axios.delete(
+          `https://utsavvibesbackend.onrender.com/api/venues/${id}`
+        );
+        // Update local venues state without page reload
+        setVenues((prevVenues) => prevVenues.filter((venue) => venue._id !== id));
       } catch (error) {
         console.error("Error deleting venue:", error);
+        alert("Failed to delete the venue. Please try again.");
+      } finally {
+        setDeletingId(null); // Reset deleting state
       }
     }
   };
 
   const handleAdd = () => {
-    navigate('/Venues/new');  // Redirect to Add Venue form
+    navigate("/Venues/new"); // Redirect to Add Venue form
   };
 
   return (
@@ -54,14 +62,16 @@ const VenueList = ({ venues }) => {
                   <button
                     className="edit-btn"
                     onClick={() => handleEdit(venue._id)}
+                    disabled={deletingId === venue._id} // Disable when deleting
                   >
                     Edit
                   </button>
                   <button
                     className="delete-btn"
                     onClick={() => handleDelete(venue._id)}
+                    disabled={deletingId === venue._id} // Disable during delete
                   >
-                    Delete
+                    {deletingId === venue._id ? "Deleting..." : "Delete"}
                   </button>
                 </td>
               </tr>

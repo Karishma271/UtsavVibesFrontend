@@ -14,9 +14,9 @@ const AdminLogin = () => {
     e.preventDefault();
     const { username, password } = formData;
 
-    // API request to authenticate the admin
+    // API request to authenticate the admin using the environment variable for backend URL
     axios
-      .post('https://utsavvibesbackend.onrender.com/api/admin/login', {
+      .post(`${process.env.REACT_APP_BACKEND_URL}/api/admin/login`, {
         username,
         password,
       })

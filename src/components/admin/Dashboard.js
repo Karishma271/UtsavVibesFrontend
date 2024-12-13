@@ -10,15 +10,34 @@ const Dashboard = () => {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
 
   useEffect(() => {
-    // Set the live backend URL
-    const apiUrl = "https://utsavvibesbackend.onrender.com/api";  // Live backend URL
+    // Fetch API URL from environment variable
+    const apiUrl = process.env.REACT_APP_BACKEND_URL;
 
-    // Fetch data from the backend
-    axios.get(`${apiUrl}/users/count`).then((res) => setUserCount(res.data.count));
-    axios.get(`${apiUrl}/venue/count`).then((res) => setVenueCount(res.data.count));
-    axios.get(`${apiUrl}/organizer/count`).then((res) => setOrganizerCount(res.data.count));
+    // Fetch Users Count
+    axios
+      .get(`${apiUrl}/api/users/count`)
+      .then((res) => setUserCount(res.data.count))
+      .catch((err) => {
+        console.error("Error fetching users count:", err);
+      });
 
-    // Simulated upcoming events
+    // Fetch Venues Count
+    axios
+      .get(`${apiUrl}/api/venue/count`)
+      .then((res) => setVenueCount(res.data.count))
+      .catch((err) => {
+        console.error("Error fetching venues count:", err);
+      });
+
+    // Fetch Organizers Count
+    axios
+      .get(`${apiUrl}/api/organizer/count`)
+      .then((res) => setOrganizerCount(res.data.count))
+      .catch((err) => {
+        console.error("Error fetching organizers count:", err);
+      });
+
+    // Simulated Upcoming Events (You may replace this with an API call)
     const events = [
       { id: 1, title: "Conference 2025", date: "2025-01-12" },
       { id: 2, title: "Product Launch", date: "2025-12-15" },

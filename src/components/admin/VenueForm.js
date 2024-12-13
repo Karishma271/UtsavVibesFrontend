@@ -18,21 +18,26 @@ const VenueForm = () => {
 
   const [imageFile, setImageFile] = useState(null);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const [loading, setLoading] = useState(false); // Loading state
+  const [message, setMessage] = useState(''); // Success/error feedback message
 
   const occasionTypeOptions = ['Wedding', 'Birthday', 'Conference', 'Party'];
   const paymentOptions = ['Credit Card', 'Cash', 'PayPal', 'Bank Transfer'];
 
+  const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com';
+
+  // Fetch venue details if updating
   useEffect(() => {
     if (id) {
       axios
-        .get(`https://utsavvibesbackend.onrender.com/api/venues/${id}`)
+        .get(`${apiUrl}/api/venues/${id}`)
         .then((response) => {
           setFormData(response.data);
           setIsUpdateMode(true);
         })
         .catch((error) => console.error('Error fetching venue:', error));
     }
-  }, [id]);
+  }, [id, apiUrl]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,33 +74,50 @@ const VenueForm = () => {
 
     if (!validateForm()) return;
 
+    setLoading(true);
+    setMessage('');
+
     try {
       let imageUrl = '';
+
+      // If an image is uploaded, handle image upload first
       if (imageFile) {
         const imageData = new FormData();
         imageData.append('image', imageFile);
-        const imageResponse = await axios.post('https://utsavvibesbackend.onrender.com/api/upload-image', imageData);
+        const imageResponse = await axios.post(`${apiUrl}/api/upload-image`, imageData);
         imageUrl = imageResponse.data.imageUrl;
       }
 
+      // Prepare updated form data
       const updatedData = { ...formData, imageUrl };
 
+      // Update or create venue based on mode
       if (isUpdateMode) {
-        await axios.put(`https://utsavvibesbackend.onrender.com/api/venues/${id}`, updatedData);
+        await axios.put(`${apiUrl}/api/venues/${id}`, updatedData);
+        setMessage('Venue updated successfully!');
       } else {
-        await axios.post('https://utsavvibesbackend.onrender.com/api/venues', updatedData);
+        await axios.post(`${apiUrl}/api/venues`, updatedData);
+        setMessage('Venue added successfully!');
       }
 
-      navigate('/venues');
+      // Navigate back to the venue list after success
+      setTimeout(() => navigate('/venues'), 2000);
     } catch (error) {
       console.error('Error saving/updating venue:', error);
+      setMessage('An error occurred while saving the venue. Please try again.');
+    } finally {
+      setLoading(false);
+      setImageFile(null); // Clear file input after submission
     }
   };
 
   return (
-    <div className="organizer-form-container">
+    <div className="venue-form-container">
       <h2>{isUpdateMode ? 'Update Venue' : 'Add Venue'}</h2>
-      <form className="organizer-form" onSubmit={handleSubmit}>
+      {message && <p className="form-message">{message}</p>}
+
+      <form className="venue-form" onSubmit={handleSubmit}>
+        {/* Occasion Type */}
         <label>Occasion Type:</label>
         <select name="occasionType" value={formData.occasionType} onChange={handleChange} required>
           <option value="">Select an occasion</option>
@@ -106,18 +128,23 @@ const VenueForm = () => {
           ))}
         </select>
 
+        {/* Venue Name */}
         <label>Venue Name:</label>
         <input type="text" name="venueName" value={formData.venueName} onChange={handleChange} required />
 
+        {/* Description */}
         <label>Description:</label>
         <textarea name="description" value={formData.description} onChange={handleChange} />
 
+        {/* Address */}
         <label>Address:</label>
         <input type="text" name="address" value={formData.address} onChange={handleChange} required />
 
+        {/* Capacity */}
         <label>Capacity:</label>
         <input type="number" name="capacity" value={formData.capacity} onChange={handleChange} />
 
+        {/* Accepted Payments */}
         <label>Accepted Payments:</label>
         <select
           multiple
@@ -132,10 +159,14 @@ const VenueForm = () => {
           ))}
         </select>
 
+        {/* Image Upload */}
         <label>Image:</label>
         <input type="file" accept="image/*" onChange={handleImageChange} />
 
-        <button className="save-btn" type="submit">{isUpdateMode ? 'Update Venue' : 'Add Venue'}</button>
+        {/* Submit Button */}
+        <button className="save-btn" type="submit" disabled={loading}>
+          {loading ? 'Please wait...' : isUpdateMode ? 'Update Venue' : 'Add Venue'}
+        </button>
       </form>
     </div>
   );

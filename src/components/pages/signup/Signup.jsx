@@ -9,6 +9,8 @@ import {
   Typography,
   CssBaseline,
   Avatar,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import bcrypt from "bcryptjs";
@@ -26,21 +28,20 @@ const Signup = () => {
 
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
-  const [isRegistered, setIsRegistered] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const clearErrors = () => {
-    setErrors({});
-  };
-
-  const handleSubmit = async () => {
-    // Validate fields
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const newErrors = {};
 
+    // Validate fields
     if (!/^[A-Za-z0-9]+$/.test(formData.username)) {
       newErrors.username = "Username should only contain letters and numbers.";
     }
@@ -87,8 +88,9 @@ const Signup = () => {
         });
 
         if (response.status === 200) {
-          setSuccessMessage("Registered successfully!");
-          setIsRegistered(true);
+          setSnackbarMessage("Registered successfully!");
+          setSnackbarSeverity("success");
+          setOpenSnackbar(true);
           setFormData({
             username: "",
             email: "",
@@ -98,16 +100,20 @@ const Signup = () => {
             secretKey: "",
             phone: "",
           });
-          clearErrors(); // Clear errors when the form is reset
+          setErrors({});
         } else if (response.status === 400) {
           newErrors.server = "User already exists!";
           setErrors(newErrors);
         } else {
-          setSuccessMessage("Signup failed. Please try again.");
+          setSnackbarMessage("Signup failed. Please try again.");
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
         }
       } catch (error) {
         console.error("Error:", error);
-        setSuccessMessage("Signup failed. Please try again.");
+        setSnackbarMessage("Signup failed. Please try again.");
+        setSnackbarSeverity("error");
+        setOpenSnackbar(true);
       }
     } else {
       setErrors(newErrors);
@@ -128,15 +134,10 @@ const Signup = () => {
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography
-          textAlign="center"
-          variant="h1"
-          fontSize="2rem"
-          gutterBottom
-        >
+        <Typography textAlign="center" variant="h1" fontSize="2rem" gutterBottom>
           Sign up
         </Typography>
-        <form noValidate>
+        <form noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
@@ -219,6 +220,7 @@ const Signup = () => {
                 required
               />
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 name="confirmPassword"
@@ -235,7 +237,7 @@ const Signup = () => {
           </Grid>
 
           <Button
-            onClick={handleSubmit}
+            type="submit"
             variant="contained"
             color="primary"
             fullWidth
@@ -250,7 +252,17 @@ const Signup = () => {
             {errors.server}
           </Typography>
         )}
-        {successMessage && <div>{successMessage}</div>}
+
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={3000}
+          onClose={() => setOpenSnackbar(false)}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        >
+          <Alert severity={snackbarSeverity} onClose={() => setOpenSnackbar(false)}>
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </Paper>
     </Container>
   );

@@ -14,11 +14,14 @@ const Organizer = () => {
 
   const fetchOrganizers = async () => {
     try {
-      const response = await axios.get('https://utsavvibesbackend.onrender.com/api/organizers'); // Updated backend URL
-      console.log('Fetched Organizers:', response.data); // Add debugging logs
+      // Fetch backend URL from environment variables
+      const apiUrl = process.env.REACT_APP_BACKEND_URL;
+      const response = await axios.get(`${apiUrl}/api/organizers`);
+      
+      console.log('Fetched Organizers:', response.data); 
       setOrganizers(response.data);
     } catch (error) {
-      console.error('Error fetching organizers:', error);
+      console.error('Error fetching organizers:', error.message || error);
     }
   };
 

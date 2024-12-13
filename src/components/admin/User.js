@@ -9,36 +9,39 @@ const User = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(2);
 
+  // Fetch users from backend
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        // Update the API URL to the live backend
-        const response = await axios.get('https://utsavvibesbackend.onrender.com/api/users');
+        const apiUrl = process.env.REACT_APP_BACKEND_URL; // Use environment variable
+        const response = await axios.get(`${apiUrl}/api/users`);
         setUsers(response.data);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('Error fetching user data:', error.message || error);
       }
     };
-
     fetchUsers();
   }, []);
 
+  // Handle search input
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
     setCurrentPage(1); // Reset to first page when search term changes
   };
 
+  // Filter users based on search term
+  const filteredUsers = users.filter((user) =>
+    user.username.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Pagination logic
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-  const filteredUsers = currentUsers.filter((user) => {
-    return user.username.toLowerCase().includes(searchTerm.toLowerCase());
-  });
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="user-management-page">
@@ -46,13 +49,15 @@ const User = () => {
         <h1>User Management</h1>
       </header>
       <nav>
-        <TextField 
-          className='textField'
-          label="Search by Names"
+        <TextField
+          label="Search by Name"
           type="text"
-          placeholder="Search by Name"
+          variant="outlined"
+          placeholder="Search for users"
           value={searchTerm}
           onChange={handleSearch}
+          fullWidth
+          className="search-field"
         />
       </nav>
       <main>
@@ -65,33 +70,51 @@ const User = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user._id}>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
+            {currentUsers.length > 0 ? (
+              currentUsers.map((user) => (
+                <tr key={user._id}>
+                  <td>{user.username}</td>
+                  <td>{user.email}</td>
+                  <td>{user.phone}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="3">No users found</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
-        <div className="pagination">
-          {users.length > usersPerPage && (
-            <ul>
-              {Array(Math.ceil(users.length / usersPerPage))
-                .fill()
-                .map((_, index) => (
-                  <li key={index + 1}>
-                    <button onClick={() => paginate(index + 1)}>
-                      {index + 1}
-                    </button>
-                  </li>
-                ))}
-            </ul>
-          )}
-        </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        )}
       </main>
     </div>
   );
 };
+
+// Pagination Component
+const Pagination = ({ currentPage, totalPages, onPageChange }) => (
+  <div className="pagination">
+    <ul>
+      {Array.from({ length: totalPages }, (_, index) => (
+        <li key={index + 1}>
+          <button
+            onClick={() => onPageChange(index + 1)}
+            className={currentPage === index + 1 ? 'active' : ''}
+          >
+            {index + 1}
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
 
 export default User;
