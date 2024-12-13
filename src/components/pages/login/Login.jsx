@@ -39,30 +39,27 @@ const Login = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
-        credentials: 'include',
-
+        credentials: 'include', // Send credentials with the request if needed
       });
 
-
-      
       const responseData = await response.json();
-console.log('Response Data:', responseData);  
+      console.log('Response Data:', responseData);  // For debugging the response
 
       if (response.ok) {
-        // Check if token is present in response data
+        // If login is successful, store the JWT token and user role
         if (responseData.token && responseData.user) {
-          // Save the token and role in localStorage
           localStorage.setItem('token', responseData.token);
           localStorage.setItem('userRole', responseData.user.role);
 
           // Redirect based on user role
           if (responseData.user.role === 'user') {
-            navigate('/'); // User dashboard
+            navigate('/'); // Navigate to user dashboard
           } else if (responseData.user.role === 'admin') {
-            navigate('/dashboard'); // Admin dashboard
+            navigate('/dashboard'); // Navigate to admin dashboard
           }
         }
       } else {
+        // If login fails, display the error message from the server
         setErrors(responseData.message || 'Invalid username or password.');
       }
     } catch (error) {
@@ -78,7 +75,7 @@ console.log('Response Data:', responseData);
         <CssBaseline />
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Typography component="h1" variant="h5" className="login-title">
-            Sign in
+            Sign In
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }} className="login-form" noValidate>
             <TextField
