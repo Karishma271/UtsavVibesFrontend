@@ -10,6 +10,7 @@ const Dashboard = () => {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
 
   useEffect(() => {
+    // Fetch API URL from environment variable
     const apiUrl = process.env.REACT_APP_BACKEND_URL;
 
     // Fetch Users Count
@@ -36,7 +37,7 @@ const Dashboard = () => {
         console.error("Error fetching organizers count:", err);
       });
 
-    // Simulated Upcoming Events (Replace with API call if available)
+    // Simulated Upcoming Events (You may replace this with an API call)
     const events = [
       { id: 1, title: "Conference 2025", date: "2025-01-12" },
       { id: 2, title: "Product Launch", date: "2025-12-15" },
@@ -59,21 +60,21 @@ const Dashboard = () => {
         <div className="stat-box">
           <p>Total Users</p>
           <h2>{userCount}</h2>
-          <Link to="/users" className="action-btn"> {/* Corrected Link */}
+          <Link to="/User" className="action-btn">
             View Users
           </Link>
         </div>
         <div className="stat-box">
           <p>Total Venues</p>
           <h2>{venueCount}</h2>
-          <Link to="/venues" className="action-btn"> {/* Corrected Link */}
+          <Link to="/Venues" className="action-btn">
             View Venues
           </Link>
         </div>
         <div className="stat-box">
           <p>Total Organizers</p>
           <h2>{organizerCount}</h2>
-          <Link to="/organizers" className="action-btn"> {/* Corrected Link */}
+          <Link to="/Organizers" className="action-btn">
             View Organizers
           </Link>
         </div>
@@ -84,18 +85,15 @@ const Dashboard = () => {
         <div className="quick-actions">
           <h3>Quick Actions</h3>
           <div className="actions-buttons">
-            <Link to="/add-user">
-              <button>Add New User</button>
+          
+            <Link to="/Venues/new">
+              <button>Add Venue</button>
             </Link>
-            <Link to="/add-venue">
-              <button>Add New Venue</button>
-            </Link>
-            <Link to="/add-organizer">
+            <Link to="/Organizers/new">
               <button>Add Organizer</button>
             </Link>
           </div>
         </div>
-
         <div className="upcoming-events">
           <h3>Upcoming Events</h3>
           <ul>
