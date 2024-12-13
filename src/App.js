@@ -47,7 +47,7 @@ function App() {
           <Route path="/birthday" element={<Birthday />} />
           <Route path="/corporate" element={<Corporate />} />
          
-          <Route path='/Usermgmt' element={<Usermgmt/>}/>
+          <Route path='/User' element={<User />} />
           <Route path='/Dashboard' element={<Dashboard/>}/>
 
           {/* Routes for Organizer */}
