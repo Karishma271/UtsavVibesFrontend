@@ -20,23 +20,10 @@ const User = () => {
   // Function to fetch users from backend
   const fetchUsers = async () => {
     try {
-      setLoading(true); // Start loading
-      setError(''); // Reset errors
-      const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com';
-      const response = await axios.get(`${apiUrl}/api/users`);
-
-      // Log and validate response
-      console.log('Fetched Users:', response.data);
-      if (Array.isArray(response.data)) {
-        setUsers(response.data);
-      } else {
-        setError('Invalid data format received from server.');
-      }
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/users`);
+      setUsers(response.data);
     } catch (error) {
-      console.error('Error fetching users:', error.message);
-      setError('Failed to fetch users. Please try again later.');
-    } finally {
-      setLoading(false); // Stop loading
+      console.error('Error fetching user data:', error);
     }
   };
 
