@@ -167,7 +167,7 @@ export const Navbar = (userRole) => {
     }
 
     const handleUserManagementClick = () => {
-        navigate("/Users")
+        navigate("/User")
     }
     const handleOrganizersClick = () => {
         navigate("/Organizers")
