@@ -112,7 +112,7 @@ body {
 .actions-buttons button {
   padding: 10px 20px;
   font-size: 1em;
-  background-color: #007bff;
+  background-color: #f44336;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -121,7 +121,7 @@ body {
 }
 
 .actions-buttons button:hover {
-  background-color: #0056b3;
+  background-color: #d32f2f;
   transform: scale(1.05);
 }
 
