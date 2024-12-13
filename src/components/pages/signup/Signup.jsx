@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import bcrypt from "bcryptjs";
-import "./signup.css";  // Import the custom CSS file
+import "./signup.css"; // Import the custom CSS file
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -51,12 +51,8 @@ const Signup = () => {
       newErrors.email = "Invalid email address.";
     }
 
-    if (
-      formData.password.length < 8 ||
-      formData.password !== formData.confirmPassword
-    ) {
-      newErrors.password =
-        "Password must be at least 8 characters and match confirm password.";
+    if (formData.password.length < 8 || formData.password !== formData.confirmPassword) {
+      newErrors.password = "Password must be at least 8 characters and match confirm password.";
     }
 
     if (formData.role === "admin" && formData.secretKey !== "shubh") {
