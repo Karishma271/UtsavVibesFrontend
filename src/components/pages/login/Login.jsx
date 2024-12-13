@@ -8,7 +8,7 @@ const theme = createTheme();
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '', // Change from username to email for login
+    email: '', // changed from username to email
     password: '',
   });
 
@@ -28,7 +28,7 @@ const Login = () => {
 
     // Validate fields
     if (!formData.email || !formData.password) {
-      setErrors('Both fields are required.');
+      setErrors('Both email and password are required.');
       return;
     }
 
@@ -46,16 +46,15 @@ const Login = () => {
 
       const responseData = await response.json();
 
-      // Check for success response
-      if (response.ok && responseData.token) {
-        // Save the token and user data in localStorage
+      if (response.ok && responseData.token && responseData.user && responseData.user.role) {
+        // Save the token and user role in localStorage
         localStorage.setItem('token', responseData.token);
         localStorage.setItem('userRole', responseData.user.role);
 
         // Set success message and reset errors
         setSuccessMessage('Login successful!');
         setErrors('');
-
+        
         // Redirect based on user role
         if (responseData.user.role === 'user') {
           navigate('/');
@@ -84,10 +83,10 @@ const Login = () => {
               margin="normal"
               required
               fullWidth
-              id="email"
+              id="email" // changed from username to email
               label="Email"
-              name="email"
-              value={formData.email}
+              name="email" // changed from username to email
+              value={formData.email} // changed from username to email
               onChange={handleInputChange}
               autoComplete="email"
               autoFocus
