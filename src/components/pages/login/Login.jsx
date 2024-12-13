@@ -7,66 +7,62 @@ import Link from '@mui/material/Link';
 const theme = createTheme();
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '', // changed from username to email
-    password: '',
-  });
-
-  const [errors, setErrors] = useState('');
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
+  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setSuccessMessage('');
 
-    // Validate fields
+    // Basic field validation
     if (!formData.email || !formData.password) {
-      setErrors('Both email and password are required.');
+      setError('Both email and password are required.');
       return;
     }
 
-    // Set loading state
     setLoading(true);
 
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
       const responseData = await response.json();
 
-      if (response.ok && responseData.token && responseData.user && responseData.user.role) {
-        // Save the token and user role in localStorage
-        localStorage.setItem('token', responseData.token);
-        localStorage.setItem('userRole', responseData.user.role);
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Invalid email or password.');
+      }
 
-        // Set success message and reset errors
-        setSuccessMessage('Login successful!');
-        setErrors('');
-        
-        // Redirect based on user role
-        if (responseData.user.role === 'user') {
-          navigate('/');
-        } else if (responseData.user.role === 'admin') {
-          navigate('/dashboard');
-        }
-      } else {
-        setErrors(responseData.message || 'Invalid email or password.');
+      // Save the token and user role
+      const { token, user } = responseData;
+      localStorage.setItem('token', token);
+      localStorage.setItem('userRole', user.role);
+
+      setSuccessMessage('Login successful! Redirecting...');
+
+      // Redirect based on user role
+      if (user.role === 'user') {
+        navigate('/');
+      } else if (user.role === 'admin') {
+        navigate('/dashboard');
       }
     } catch (error) {
-      console.error('Error:', error);
-      setErrors('Login failed. Please try again.');
+      console.error('Login error:', error);
+      setError(error.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -77,16 +73,16 @@ const Login = () => {
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Typography component="h1" variant="h5">Sign in</Typography>
+          <Typography component="h1" variant="h5">Sign In</Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
               fullWidth
-              id="email" // changed from username to email
+              id="email"
               label="Email"
-              name="email" // changed from username to email
-              value={formData.email} // changed from username to email
+              name="email"
+              value={formData.email}
               onChange={handleInputChange}
               autoComplete="email"
               autoFocus
@@ -112,8 +108,16 @@ const Login = () => {
             >
               {loading ? 'Loading...' : 'Sign In'}
             </Button>
-            {errors && <Typography variant="body2" color="error" sx={{ mt: 1 }}>{errors}</Typography>}
-            {successMessage && <Typography variant="body2" color="success" sx={{ mt: 1 }}>{successMessage}</Typography>}
+            {error && (
+              <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                {error}
+              </Typography>
+            )}
+            {successMessage && (
+              <Typography variant="body2" color="success" sx={{ mt: 1 }}>
+                {successMessage}
+              </Typography>
+            )}
             <Grid container>
               <Grid item>
                 <Link style={{ cursor: 'pointer' }} onClick={() => navigate('/signup')} variant="body2">
