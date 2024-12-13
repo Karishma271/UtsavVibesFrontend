@@ -1,52 +1,57 @@
-// Usermgmt.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './User.css';
 import { TextField } from '@mui/material';
 
-const Usermgmt = () => {
+const User = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(2);
+  const [loading, setLoading] = useState(false); // Added loading state
+  const [error, setError] = useState(''); // Added error state
 
-  // Fetch users from the backend
-    useEffect(() => {
-      fetchusers();
-    }, []);
-  
-    const fetchusers = async () => {
-      try {
-        setLoading(true); // Start loading
-        setError(''); // Reset error
-        const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com'; // Use environment variable
-        const response = await axios.get(`${apiUrl}/api/users`);
-        console.log('Fetched users:', response.data); // Debugging logs
-        setusers(response.data); // Update state with fetched users
-      } catch (error) {
-        console.error('Error fetching users:', error);
-        setError('Failed to fetch users. Please try again later.');
-      } finally {
-        setLoading(false); // Stop loading
-      }
-    };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true); // Set loading to true while fetching
+      setError(''); // Reset error message
+      const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com';
+      const response = await axios.get(`${apiUrl}/api/users`);
+      console.log('Fetched users:', response.data); // Log the fetched users for debugging
+      setUsers(response.data); // Update the state with the fetched users
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setError('Failed to fetch users. Please try again later.');
+    } finally {
+      setLoading(false); // Set loading to false after fetching
+    }
+  };
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset pagination when search term changes
   };
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  
+  // Filter the users based on the search term
+  const filteredUsers = users.filter((user) =>
+    user.username.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const filteredUsers = currentUsers.filter((user) => {
-    return user.username.toLowerCase().includes(searchTerm.toLowerCase());
-  });
+  // Slice the filtered users based on pagination
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  if (loading) {
+    return <div>Loading...</div>; // Display loading text if data is being fetched
+  }
 
   return (
     <div className="user-management-page">
@@ -54,8 +59,9 @@ const Usermgmt = () => {
         <h1>User Management</h1>
       </header>
       <nav>
-        <TextField className='textField'
-          label="Search by Names"
+        <TextField
+          className='textField'
+          label="Search by Name"
           type="text"
           placeholder="Search by Name"
           value={searchTerm}
@@ -63,6 +69,8 @@ const Usermgmt = () => {
         />
       </nav>
       <main>
+        {error && <div className="error-message">{error}</div>} {/* Display error message if there is an error */}
+
         <table className="user-table">
           <thead>
             <tr>
@@ -72,19 +80,27 @@ const Usermgmt = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user._id}>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
+            {currentUsers.length > 0 ? (
+              currentUsers.map((user) => (
+                <tr key={user._id}>
+                  <td>{user.username}</td>
+                  <td>{user.email}</td>
+                  <td>{user.phone}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="3">No users found</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
-        <div className="pagination">
-          {users.length > usersPerPage && (
+
+        {/* Pagination */}
+        {filteredUsers.length > usersPerPage && (
+          <div className="pagination">
             <ul>
-              {Array(Math.ceil(users.length / usersPerPage))
+              {Array(Math.ceil(filteredUsers.length / usersPerPage))
                 .fill()
                 .map((_, index) => (
                   <li key={index + 1}>
@@ -94,11 +110,11 @@ const Usermgmt = () => {
                   </li>
                 ))}
             </ul>
-          )}
-        </div>
+          </div>
+        )}
       </main>
     </div>
   );
 };
 
-export default Usermgmt;
+export default User;
