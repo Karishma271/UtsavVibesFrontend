@@ -64,18 +64,6 @@
     text-align: center;
     margin-top: 20px;
   }
-  
-  /* Responsive Design for smaller screens */
-  @media screen and (max-width: 768px) {
-    .venue-table th,
-    .venue-table td {
-      font-size: 12px;
-    }
-  
-    .venue-list-container p {
-      font-size: 14px;
-    }
-  }
   .add-venue-btn {
     background-color: #4caf50;
     color: #fff;
@@ -90,4 +78,16 @@
   .add-venue-btn:hover {
     background-color: #388e3c;
   }
+  /* Responsive Design for smaller screens */
+  @media screen and (max-width: 768px) {
+    .venue-table th,
+    .venue-table td {
+      font-size: 12px;
+    }
+  
+    .venue-list-container p {
+      font-size: 14px;
+    }
+  }
+  
   

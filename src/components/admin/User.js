@@ -19,16 +19,16 @@ const User = () => {
     try {
       setLoading(true);
       setError('');
-      const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com'; // Default API URL for production
-      console.log('API URL:', apiUrl); // Check the API URL
+      const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com';
+      console.log('API URL:', apiUrl);
       const response = await axios.get(`${apiUrl}/api/users`);
-      console.log('Fetched users:', response.data); // Log the fetched users
+      console.log('Fetched users:', response.data);
       setUsers(response.data); // Update state with fetched users
     } catch (error) {
       console.error('Error fetching users:', error);
       setError('Failed to fetch users. Please try again later.');
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
@@ -40,19 +40,15 @@ const User = () => {
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
 
-  // Filter users based on search term and current page
   const filteredUsers = users.filter((user) =>
     user.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-  console.log('Filtered users:', filteredUsers); // Check the filtered users
-  console.log('Current users on page:', currentUsers); // Check the users displayed on the current page
-
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (loading) {
-    return <div>Loading...</div>; // Show loading state while fetching data
+    return <div>Loading...</div>;
   }
 
   return (
@@ -71,7 +67,7 @@ const User = () => {
         />
       </nav>
       <main>
-        {error && <div className="error-message">{error}</div>} {/* Display error if fetching fails */}
+        {error && <div className="error-message">{error}</div>}
 
         <table className="user-table">
           <thead>
@@ -92,13 +88,12 @@ const User = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="3">No users found</td> {/* Show message when no users match */}
+                <td colSpan="3">No users found</td>
               </tr>
             )}
           </tbody>
         </table>
 
-        {/* Pagination */}
         {filteredUsers.length > usersPerPage && (
           <div className="pagination">
             <ul>
@@ -106,9 +101,7 @@ const User = () => {
                 .fill()
                 .map((_, index) => (
                   <li key={index + 1}>
-                    <button onClick={() => paginate(index + 1)}>
-                      {index + 1}
-                    </button>
+                    <button onClick={() => paginate(index + 1)}>{index + 1}</button>
                   </li>
                 ))}
             </ul>
