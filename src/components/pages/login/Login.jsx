@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
-import { TextField, Button, Container, Box, Typography, Grid, Link, CssBaseline, CircularProgress } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { TextField, Button, Container, Grid, Typography, CssBaseline, Box } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import './login.css';
+import Link from '@mui/material/Link';
 
 const theme = createTheme();
 
 const Login = () => {
-  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+  });
+
   const [errors, setErrors] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -19,15 +25,15 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors('');
-    setLoading(true);
 
-    // Validate inputs
+    // Validate fields
     if (!formData.username || !formData.password) {
-      setErrors('Please fill in all fields.');
-      setLoading(false);
+      setErrors('Both fields are required.');
       return;
     }
+
+    // Set loading state
+    setLoading(true);
 
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/login`, {
@@ -39,19 +45,24 @@ const Login = () => {
       });
 
       const responseData = await response.json();
-      if (response.ok && responseData.token && responseData.user) {
-        // Store token and role in localStorage
+
+      if (response.ok && responseData.token && responseData.user && responseData.user.role) {
+        // Save the token and user role in localStorage
         localStorage.setItem('token', responseData.token);
         localStorage.setItem('userRole', responseData.user.role);
 
-        // Redirect based on role
+        // Set success message and reset errors
+        setSuccessMessage('Login successful!');
+        setErrors('');
+        
+        // Redirect based on user role
         if (responseData.user.role === 'user') {
           navigate('/');
         } else if (responseData.user.role === 'admin') {
           navigate('/dashboard');
         }
       } else {
-        setErrors(responseData.message || 'Invalid username or password.');
+        setErrors('Invalid username or password.');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -63,11 +74,11 @@ const Login = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs" className="login-container">
+      <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Typography component="h1" variant="h5" className="login-title">Sign In</Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }} className="login-form" noValidate>
+        <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Typography component="h1" variant="h5">Sign in</Typography>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -84,12 +95,12 @@ const Login = () => {
               margin="normal"
               required
               fullWidth
-              id="password"
-              label="Password"
               name="password"
+              label="Password"
+              type="password"
+              id="password"
               value={formData.password}
               onChange={handleInputChange}
-              type="password"
               autoComplete="current-password"
             />
             <Button
@@ -98,11 +109,11 @@ const Login = () => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
               disabled={loading}
-              className="login-button"
             >
-              {loading ? <CircularProgress size={24} color="secondary" /> : 'Sign In'}
+              {loading ? 'Loading...' : 'Sign In'}
             </Button>
-            {errors && <Typography variant="body2" color="error" sx={{ mt: 1 }} className="error-message">{errors}</Typography>}
+            {errors && <Typography variant="body2" color="error" sx={{ mt: 1 }}>{errors}</Typography>}
+            {successMessage && <Typography variant="body2" color="success" sx={{ mt: 1 }}>{successMessage}</Typography>}
             <Grid container>
               <Grid item>
                 <Link style={{ cursor: 'pointer' }} onClick={() => navigate('/signup')} variant="body2">
