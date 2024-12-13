@@ -30,11 +30,12 @@ const VenueList = () => {
 
   return (
     <div>
+        <div className="fp">
       <Typography variant="h1" fontSize="3rem" mb={4} gutterBottom>
         Venues
       </Typography>
 
-      <div className="fp">
+    
         {error && <Typography color="error">{error}</Typography>}
 
         {venues.length > 0 ? (
