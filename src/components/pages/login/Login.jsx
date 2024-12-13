@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { TextField, Button, Container, Box, Typography, Grid, Link, CssBaseline, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Cookies from 'js-cookie'; // Import js-cookie for cookie handling
 import './login.css';
 
 const theme = createTheme();
@@ -37,14 +36,13 @@ const Login = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
-        
       });
 
       const responseData = await response.json();
       if (response.ok && responseData.token && responseData.user) {
-        // Store token and role in cookies
-        Cookies.set('token', responseData.token, { expires: 1 / 24, secure: true, sameSite: 'Strict' });
-        Cookies.set('userRole', responseData.user.role, { expires: 1 / 24, secure: true, sameSite: 'Strict' });
+        // Store token and role in localStorage
+        localStorage.setItem('token', responseData.token);
+        localStorage.setItem('userRole', responseData.user.role);
 
         // Redirect based on role
         if (responseData.user.role === 'user') {
