@@ -15,51 +15,45 @@ const Login = () => {
   const navigate = useNavigate();
 
   // Handle input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccessMessage('');
-
+  
     // Basic field validation
     if (!formData.email || !formData.password) {
       setError('Both email and password are required.');
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
       // Trim the input to remove any extra spaces
       const trimmedData = {
         email: formData.email.trim(),
         password: formData.password.trim(),
       };
-
+  
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(trimmedData),
       });
-
+  
       const responseData = await response.json();
-
+  
       if (!response.ok) {
         throw new Error(responseData.message || 'Invalid email or password.');
       }
-
-      // Save the token and user role
+  
+      // Save the token and user role in local storage
       const { token, user } = responseData;
       localStorage.setItem('token', token);
       localStorage.setItem('userRole', user.role);
-
+  
       setSuccessMessage('Login successful! Redirecting...');
-
+  
       // Redirect based on user role
       if (user.role === 'user') {
         navigate('/');
