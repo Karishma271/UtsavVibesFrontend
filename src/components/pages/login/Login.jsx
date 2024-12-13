@@ -8,7 +8,7 @@ const theme = createTheme();
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '', // Changed to 'email'
     password: '',
   });
 
@@ -27,7 +27,7 @@ const Login = () => {
     e.preventDefault();
 
     // Validate fields
-    if (!formData.username || !formData.password) {
+    if (!formData.email || !formData.password) {
       setErrors('Both fields are required.');
       return;
     }
@@ -62,7 +62,7 @@ const Login = () => {
           navigate('/dashboard');
         }
       } else {
-        setErrors('Invalid username or password.');
+        setErrors('Invalid email or password.');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -83,12 +83,12 @@ const Login = () => {
               margin="normal"
               required
               fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              value={formData.username}
+              id="email"  // Changed to 'email'
+              label="Email"  // Changed label to 'Email'
+              name="email"  // Changed name to 'email'
+              value={formData.email}  // Bind to 'email'
               onChange={handleInputChange}
-              autoComplete="username"
+              autoComplete="email"  // Use 'email' autocomplete
               autoFocus
             />
             <TextField
