@@ -22,7 +22,7 @@ const User = () => {
     try {
       setLoading(true); // Start loading
       setError(''); // Reset errors
-      const apiUrl = process.env.REACT_APP_BACKEND_URL;
+      const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com';
       const response = await axios.get(`${apiUrl}/api/users`);
 
       // Log and validate response
