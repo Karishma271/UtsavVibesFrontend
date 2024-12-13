@@ -11,11 +11,11 @@ import {
   Avatar,
   Snackbar,
   Alert,
+  CircularProgress, // Added loading spinner
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import bcrypt from "bcryptjs";
 import "./signup.css";
-
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -32,6 +32,7 @@ const Signup = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [loading, setLoading] = useState(false); // Loading state for button
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -68,6 +69,7 @@ const Signup = () => {
     }
 
     if (Object.keys(newErrors).length === 0) {
+      setLoading(true); // Start loading
       const hashedPassword = await bcrypt.hash(formData.password, 10);
 
       const newUser = {
@@ -90,6 +92,8 @@ const Signup = () => {
           }
         );
 
+        const data = await response.json(); // Get response data
+
         if (response.status === 200) {
           setSnackbarMessage("Registered successfully!");
           setSnackbarSeverity("success");
@@ -105,7 +109,7 @@ const Signup = () => {
           });
           setErrors({});
         } else if (response.status === 400) {
-          newErrors.server = "User already exists!";
+          newErrors.server = data.message || "User already exists!";
           setErrors(newErrors);
         } else {
           setSnackbarMessage("Signup failed. Please try again.");
@@ -117,6 +121,8 @@ const Signup = () => {
         setSnackbarMessage("Signup failed. Please try again.");
         setSnackbarSeverity("error");
         setOpenSnackbar(true);
+      } finally {
+        setLoading(false); // Stop loading
       }
     } else {
       setErrors(newErrors);
@@ -245,8 +251,9 @@ const Signup = () => {
             color="primary"
             fullWidth
             sx={{ mt: 2 }}
+            disabled={loading} // Disable button during loading
           >
-            Signup
+            {loading ? <CircularProgress size={24} color="inherit" /> : "Signup"} {/* Show loading spinner */}
           </Button>
         </form>
 
