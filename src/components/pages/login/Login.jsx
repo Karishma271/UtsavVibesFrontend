@@ -53,7 +53,7 @@ const Login = () => {
         throw new Error(responseData.message || 'Invalid email or password.');
       }
 
-      // Save the token and user role in local storage
+      // Save the token and user role
       const { token, user } = responseData;
       localStorage.setItem('token', token);
       localStorage.setItem('userRole', user.role);
