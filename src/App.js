@@ -13,7 +13,7 @@ import Corporate from './components/pages/events/corporate';
 import HomePage from './components/pages/home/Home';
 import Footer from './components/footer/Footer';
 import Venue from './components/admin/Venue';
-import Usermgmt from './components/admin/User';
+import User from './components/admin/User';
 import Dashboard from './components/admin/Dashboard';
 import Organizer from './components/admin/Organizer';  // Main Organizer Page (Organizer.js)
 import OrganizerForm from './components/admin/OrganizerForm';  // Add/Edit Organizer (OrganizerForm.js)
