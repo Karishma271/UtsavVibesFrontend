@@ -14,6 +14,8 @@ import {
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import bcrypt from "bcryptjs";
+import "./signup.css";
+
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -27,7 +29,6 @@ const Signup = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
@@ -41,7 +42,7 @@ const Signup = () => {
     e.preventDefault();
     const newErrors = {};
 
-    // Validate fields
+    // Validation Logic
     if (!/^[A-Za-z0-9]+$/.test(formData.username)) {
       newErrors.username = "Username should only contain letters and numbers.";
     }
@@ -69,7 +70,6 @@ const Signup = () => {
     if (Object.keys(newErrors).length === 0) {
       const hashedPassword = await bcrypt.hash(formData.password, 10);
 
-      // Create a new user object with the hashed password
       const newUser = {
         username: formData.username,
         email: formData.email,
@@ -79,13 +79,16 @@ const Signup = () => {
       };
 
       try {
-        const response = await fetch('https://utsavvibesbackend.onrender.com/api/signup', {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newUser),
-        });
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_URL}/api/signup`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newUser),
+          }
+        );
 
         if (response.status === 200) {
           setSnackbarMessage("Registered successfully!");
@@ -134,8 +137,8 @@ const Signup = () => {
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography textAlign="center" variant="h1" fontSize="2rem" gutterBottom>
-          Sign up
+        <Typography variant="h5" textAlign="center" gutterBottom>
+          Sign Up
         </Typography>
         <form noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2}>
@@ -246,12 +249,6 @@ const Signup = () => {
             Signup
           </Button>
         </form>
-
-        {errors.server && (
-          <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-            {errors.server}
-          </Typography>
-        )}
 
         <Snackbar
           open={openSnackbar}
