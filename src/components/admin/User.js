@@ -1,9 +1,10 @@
+// Usermgmt.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './User.css';
 import { TextField } from '@mui/material';
 
-const User = () => {
+const Usermgmt = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,7 +14,7 @@ const User = () => {
     const fetchUsers = async () => {
       try {
         const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com'; // Use environment variable
-              const response = await axios.get(`${apiUrl}/api/users`);// Use relative URL if backend and frontend are on the same server
+              const response = await axios.get(`${apiUrl}/api/users`);
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -25,20 +26,20 @@ const User = () => {
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset to first page when search term changes
+    setCurrentPage(1);
   };
 
-  // Filter users based on search term
-  const filteredUsers = users.filter((user) =>
-    user.username.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Pagination logic
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const filteredUsers = currentUsers.filter((user) => {
+    return user.username.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="user-management-page">
@@ -46,9 +47,8 @@ const User = () => {
         <h1>User Management</h1>
       </header>
       <nav>
-        <TextField
-          className="textField"
-          label="Search by Name"
+        <TextField className='textField'
+          label="Search by Names"
           type="text"
           placeholder="Search by Name"
           value={searchTerm}
@@ -65,25 +65,19 @@ const User = () => {
             </tr>
           </thead>
           <tbody>
-            {currentUsers.length > 0 ? (
-              currentUsers.map((user) => (
-                <tr key={user._id}>
-                  <td>{user.username}</td>
-                  <td>{user.email}</td>
-                  <td>{user.phone}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="3">No users found</td>
+            {filteredUsers.map((user) => (
+              <tr key={user._id}>
+                <td>{user.username}</td>
+                <td>{user.email}</td>
+                <td>{user.phone}</td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
         <div className="pagination">
-          {filteredUsers.length > usersPerPage && (
+          {users.length > usersPerPage && (
             <ul>
-              {Array(Math.ceil(filteredUsers.length / usersPerPage))
+              {Array(Math.ceil(users.length / usersPerPage))
                 .fill()
                 .map((_, index) => (
                   <li key={index + 1}>
@@ -100,4 +94,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default Usermgmt;
