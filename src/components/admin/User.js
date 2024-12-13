@@ -4,56 +4,67 @@ import './User.css';
 import { TextField } from '@mui/material';
 
 const User = () => {
-  const [users, setUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage] = useState(2);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [users, setUsers] = useState([]); // User list state
+  const [searchTerm, setSearchTerm] = useState(''); // Search input state
+  const [currentPage, setCurrentPage] = useState(1); // Pagination state
+  const usersPerPage = 5; // Users displayed per page
 
+  const [loading, setLoading] = useState(false); // Loading indicator state
+  const [error, setError] = useState(''); // Error message state
+
+  // Fetch users when component loads
   useEffect(() => {
     fetchUsers();
   }, []);
 
- const fetchUsers = async () => {
-     try {
-       setLoading(true); // Start loading
-       setError(''); // Reset error
-       const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com'; // Use environment variable
-       const response = await axios.get(`${apiUrl}/api/users`);
-       console.log('Fetched Users:', response.data); // Debugging logs
-       setUsers(response.data); // Update state with fetched users
-     } catch (error) {
-       console.error('Error fetching users:', error);
-       setError('Failed to fetch users. Please try again later.');
-     } finally {
-       setLoading(false); // Stop loading
-     }
-   };
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset to first page when search term changes
+  // Function to fetch users from backend
+  const fetchUsers = async () => {
+    try {
+      setLoading(true); // Start loading
+      setError(''); // Reset errors
+      const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com';
+      const response = await axios.get(`${apiUrl}/api/users`);
+
+      // Log and validate response
+      console.log('Fetched Users:', response.data);
+      if (Array.isArray(response.data)) {
+        setUsers(response.data);
+      } else {
+        setError('Invalid data format received from server.');
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error.message);
+      setError('Failed to fetch users. Please try again later.');
+    } finally {
+      setLoading(false); // Stop loading
+    }
   };
 
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  // Handle search input
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Reset to first page
+  };
 
+  // Filter users based on search input
   const filteredUsers = users.filter((user) =>
     user.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Pagination logic
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="user-management-page">
       <header>
         <h1>User Management</h1>
       </header>
+
+      {/* Search Bar */}
       <nav>
         <TextField
           className="textField"
@@ -64,9 +75,13 @@ const User = () => {
           onChange={handleSearch}
         />
       </nav>
+
+      {/* Main Content */}
       <main>
+        {loading && <div className="loading-message">Loading...</div>}
         {error && <div className="error-message">{error}</div>}
 
+        {/* User Table */}
         <table className="user-table">
           <thead>
             <tr>
@@ -92,6 +107,7 @@ const User = () => {
           </tbody>
         </table>
 
+        {/* Pagination */}
         {filteredUsers.length > usersPerPage && (
           <div className="pagination">
             <ul>
@@ -99,7 +115,12 @@ const User = () => {
                 .fill()
                 .map((_, index) => (
                   <li key={index + 1}>
-                    <button onClick={() => paginate(index + 1)}>{index + 1}</button>
+                    <button
+                      onClick={() => paginate(index + 1)}
+                      className={currentPage === index + 1 ? 'active' : ''}
+                    >
+                      {index + 1}
+                    </button>
                   </li>
                 ))}
             </ul>
