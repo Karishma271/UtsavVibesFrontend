@@ -53,6 +53,7 @@ const Birthday = () => {
     const eventData = { personName, eventDate, venue, email, phoneNumber };
     let isValid = true;
 
+    // Validate each field
     for (const fieldName of Object.keys(eventData)) {
       if (!validateField(fieldName, eventData[fieldName])) {
         handleFieldChange(fieldName, eventData[fieldName]);
@@ -65,10 +66,19 @@ const Birthday = () => {
     }
 
     try {
-      const response = await axios.post('/birthday', eventData);
+      // Send data to the backend (adjust URL accordingly)
+      const response = await axios.post('https://utsavvibesbackend.onrender.com/birthday', eventData);
+
+      // Success message
       setSuccessMessage(response.data.message);
+      setPersonName('');
+      setEventDate('');
+      setVenue('');
+      setEmail('');
+      setPhoneNumber('');
     } catch (error) {
       console.error('Error while saving data:', error);
+      setErrorMessages({ ...errorMessages, general: 'Failed to register the event. Please try again.' });
     }
   };
 
@@ -79,6 +89,7 @@ const Birthday = () => {
           Birthday Event Planner Form
         </Typography>
         {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+        {errorMessages.general && <p style={{ color: 'red' }}>{errorMessages.general}</p>}
         <form onSubmit={handleSubmit} className="form">
           <TextField
             label="Person Name"
