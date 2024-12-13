@@ -12,7 +12,8 @@ const User = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('/api/users'); // Use relative URL if backend and frontend are on the same server
+        const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com'; // Use environment variable
+              const response = await axios.get(`${apiUrl}/api/users`);// Use relative URL if backend and frontend are on the same server
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching user data:', error);
