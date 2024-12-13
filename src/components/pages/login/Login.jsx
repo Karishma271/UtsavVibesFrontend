@@ -12,8 +12,7 @@ const Login = () => {
   });
 
   const [errors, setErrors] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [loading, setLoading] = useState(false); // To show a loading spinner
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -23,18 +22,15 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors(''); // Clear errors
+    setLoading(true); // Show loading spinner
 
-    // Clear previous error or success messages
-    setErrors('');
-    setSuccessMessage('');
-
-    // Simple form validation
+    // Basic validation for empty fields
     if (!formData.username || !formData.password) {
       setErrors('Please fill in all fields.');
+      setLoading(false); // Stop loading
       return;
     }
-
-    setLoading(true); // Set loading state when submitting
 
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/login`, {
@@ -45,35 +41,29 @@ const Login = () => {
         body: JSON.stringify(formData),
       });
 
-      setLoading(false); // Stop loading after request completes
+      const responseData = await response.json();
+      setLoading(false); // Stop loading after response
 
-      if (response.status === 200) {
-        const responseData = await response.json();
-        console.log('Response Data:', responseData); // Log the response
-
-        if (responseData.token && responseData.user && responseData.user.role) {
-          // Save the token and role to localStorage
+      if (response.ok) {
+        // Check if token is present in response data
+        if (responseData.token && responseData.user) {
+          // Save the token and role in localStorage
           localStorage.setItem('token', responseData.token);
           localStorage.setItem('userRole', responseData.user.role);
 
-          // Redirect based on the user's role
+          // Redirect based on user role
           if (responseData.user.role === 'user') {
-            navigate('/'); // Redirect to user dashboard
+            navigate('/'); // User dashboard
           } else if (responseData.user.role === 'admin') {
-            navigate('/dashboard'); // Redirect to admin dashboard
+            navigate('/dashboard'); // Admin dashboard
           }
-
-          // Set success message
-          setSuccessMessage('Login successful!');
-        } else {
-          setErrors('Invalid username or password.');
         }
       } else {
-        setErrors('Invalid username or password.');
+        setErrors(responseData.message || 'Invalid username or password.');
       }
     } catch (error) {
       console.error('Error:', error);
-      setLoading(false); // Stop loading if there's an error
+      setLoading(false); // Stop loading if an error occurs
       setErrors('Login failed. Please try again.');
     }
   };
@@ -117,7 +107,7 @@ const Login = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={loading} // Disable button while loading
+              disabled={loading} // Disable the button when loading
               className="login-button"
             >
               {loading ? <CircularProgress size={24} color="secondary" /> : 'Sign In'}
@@ -126,12 +116,6 @@ const Login = () => {
             {errors && (
               <Typography variant="body2" color="error" sx={{ mt: 1 }} className="error-message">
                 {errors}
-              </Typography>
-            )}
-
-            {successMessage && (
-              <Typography variant="body2" color="success" sx={{ mt: 1 }} className="success-message">
-                {successMessage}
               </Typography>
             )}
 

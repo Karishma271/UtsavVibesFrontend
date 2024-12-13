@@ -60,7 +60,7 @@ const Dashboard = () => {
         <div className="stat-box">
           <p>Total Users</p>
           <h2>{userCount}</h2>
-          <Link to="/Usermgmt" className="action-btn">
+          <Link to="/Usert" className="action-btn">
             View Users
           </Link>
         </div>
