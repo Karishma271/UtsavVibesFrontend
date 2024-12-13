@@ -35,10 +35,16 @@ const Login = () => {
     setLoading(true);
 
     try {
+      // Trim the input to remove any extra spaces
+      const trimmedData = {
+        email: formData.email.trim(),
+        password: formData.password.trim(),
+      };
+
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(trimmedData),
       });
 
       const responseData = await response.json();
@@ -47,7 +53,7 @@ const Login = () => {
         throw new Error(responseData.message || 'Invalid email or password.');
       }
 
-      // Save the token and user role
+      // Save the token and user role in local storage
       const { token, user } = responseData;
       localStorage.setItem('token', token);
       localStorage.setItem('userRole', user.role);
@@ -133,4 +139,3 @@ const Login = () => {
 };
 
 export default Login;
-
