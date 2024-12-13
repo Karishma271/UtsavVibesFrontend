@@ -8,8 +8,8 @@ const User = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(2);
-  const [loading, setLoading] = useState(false); // Added loading state
-  const [error, setError] = useState(''); // Added error state
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchUsers();
@@ -17,40 +17,42 @@ const User = () => {
 
   const fetchUsers = async () => {
     try {
-      setLoading(true); // Set loading to true while fetching
-      setError(''); // Reset error message
-      const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com';
+      setLoading(true);
+      setError('');
+      const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com'; // Default API URL for production
+      console.log('API URL:', apiUrl); // Check the API URL
       const response = await axios.get(`${apiUrl}/api/users`);
-      console.log('Fetched users:', response.data); // Log the fetched users for debugging
-      setUsers(response.data); // Update the state with the fetched users
+      console.log('Fetched users:', response.data); // Log the fetched users
+      setUsers(response.data); // Update state with fetched users
     } catch (error) {
       console.error('Error fetching users:', error);
       setError('Failed to fetch users. Please try again later.');
     } finally {
-      setLoading(false); // Set loading to false after fetching
+      setLoading(false); // Stop loading
     }
   };
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset pagination when search term changes
+    setCurrentPage(1); // Reset to first page when search term changes
   };
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  
-  // Filter the users based on the search term
+
+  // Filter users based on search term and current page
   const filteredUsers = users.filter((user) =>
     user.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Slice the filtered users based on pagination
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+  console.log('Filtered users:', filteredUsers); // Check the filtered users
+  console.log('Current users on page:', currentUsers); // Check the users displayed on the current page
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (loading) {
-    return <div>Loading...</div>; // Display loading text if data is being fetched
+    return <div>Loading...</div>; // Show loading state while fetching data
   }
 
   return (
@@ -60,7 +62,7 @@ const User = () => {
       </header>
       <nav>
         <TextField
-          className='textField'
+          className="textField"
           label="Search by Name"
           type="text"
           placeholder="Search by Name"
@@ -69,7 +71,7 @@ const User = () => {
         />
       </nav>
       <main>
-        {error && <div className="error-message">{error}</div>} {/* Display error message if there is an error */}
+        {error && <div className="error-message">{error}</div>} {/* Display error if fetching fails */}
 
         <table className="user-table">
           <thead>
@@ -90,7 +92,7 @@ const User = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="3">No users found</td>
+                <td colSpan="3">No users found</td> {/* Show message when no users match */}
               </tr>
             )}
           </tbody>
