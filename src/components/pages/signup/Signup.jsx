@@ -79,12 +79,13 @@ const Signup = () => {
       };
 
       try {
-        const response = await fetch("https://utsavvibesbackend.onrender.com/api/signup", {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/signup`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(newUser),
+          credentials: "include", // Ensure cookies are sent (if needed)
         });
 
         if (response.status === 200) {
