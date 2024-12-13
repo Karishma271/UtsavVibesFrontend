@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import bcrypt from "bcryptjs";
-import "./signup.css"; // Import the custom CSS file
+import "./signup.css";  // Import the custom CSS file
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -51,8 +51,12 @@ const Signup = () => {
       newErrors.email = "Invalid email address.";
     }
 
-    if (formData.password.length < 8 || formData.password !== formData.confirmPassword) {
-      newErrors.password = "Password must be at least 8 characters and match confirm password.";
+    if (
+      formData.password.length < 8 ||
+      formData.password !== formData.confirmPassword
+    ) {
+      newErrors.password =
+        "Password must be at least 8 characters and match confirm password.";
     }
 
     if (formData.role === "admin" && formData.secretKey !== "shubh") {
@@ -84,8 +88,8 @@ const Signup = () => {
           credentials: "include", // Ensure cookies are sent (if needed)
         });
 
-        if (response.status === 200) {
-          setSuccessMessage("Registered successfully!");
+        if (response.status === 201) {
+          setSuccessMessage("Registered successfully! Please log in.");
           setIsRegistered(true);
           setFormData({
             username: "",
@@ -97,11 +101,10 @@ const Signup = () => {
             phone: "",
           });
           clearErrors();
-        } else if (response.status === 400) {
-          newErrors.server = "User already exists!";
-          setErrors(newErrors);
         } else {
-          setSuccessMessage("Signup failed. Please try again.");
+          const errorData = await response.json();
+          newErrors.server = errorData.message || "Signup failed. Please try again.";
+          setErrors(newErrors);
         }
       } catch (error) {
         console.error("Error:", error);
@@ -222,19 +225,18 @@ const Signup = () => {
             variant="contained"
             color="primary"
             fullWidth
-            className="MuiButton-root"
           >
             Sign Up
           </Button>
         </form>
 
         {errors.server && (
-          <Typography variant="body2" color="error" className="MuiTypography-body2">
+          <Typography variant="body2" color="error">
             {errors.server}
           </Typography>
         )}
         {successMessage && (
-          <Typography variant="body2" color="green" className="MuiTypography-body2">
+          <Typography variant="body2" color="green">
             {successMessage}
           </Typography>
         )}
