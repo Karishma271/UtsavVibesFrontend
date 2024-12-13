@@ -10,19 +10,26 @@ const Usermgmt = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(2);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
+  // Fetch users from the backend
+    useEffect(() => {
+      fetchusers();
+    }, []);
+  
+    const fetchusers = async () => {
       try {
+        setLoading(true); // Start loading
+        setError(''); // Reset error
         const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com'; // Use environment variable
-              const response = await axios.get(`${apiUrl}/api/users`);
-        setUsers(response.data);
+        const response = await axios.get(`${apiUrl}/api/users`);
+        console.log('Fetched users:', response.data); // Debugging logs
+        setusers(response.data); // Update state with fetched users
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('Error fetching users:', error);
+        setError('Failed to fetch users. Please try again later.');
+      } finally {
+        setLoading(false); // Stop loading
       }
     };
-
-    fetchUsers();
-  }, []);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
