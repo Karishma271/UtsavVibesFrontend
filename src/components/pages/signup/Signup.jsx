@@ -9,13 +9,10 @@ import {
   Typography,
   CssBaseline,
   Avatar,
-  Snackbar,
-  Alert,
-  CircularProgress, // Added loading spinner
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import bcrypt from "bcryptjs";
-import "./signup.css";
+import "./signup.css";  // Import the custom CSS file
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -29,21 +26,23 @@ const Signup = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const [loading, setLoading] = useState(false); // Loading state for button
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isRegistered, setIsRegistered] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  const clearErrors = () => {
+    setErrors({});
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
-    // Validation Logic
+    // Input Validation
     if (!/^[A-Za-z0-9]+$/.test(formData.username)) {
       newErrors.username = "Username should only contain letters and numbers.";
     }
@@ -69,7 +68,6 @@ const Signup = () => {
     }
 
     if (Object.keys(newErrors).length === 0) {
-      setLoading(true); // Start loading
       const hashedPassword = await bcrypt.hash(formData.password, 10);
 
       const newUser = {
@@ -81,23 +79,17 @@ const Signup = () => {
       };
 
       try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/signup`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newUser),
-          }
-        );
-
-        const data = await response.json(); // Get response data
+        const response = await fetch("https://utsavvibesbackend.onrender.com/api/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newUser),
+        });
 
         if (response.status === 200) {
-          setSnackbarMessage("Registered successfully!");
-          setSnackbarSeverity("success");
-          setOpenSnackbar(true);
+          setSuccessMessage("Registered successfully!");
+          setIsRegistered(true);
           setFormData({
             username: "",
             email: "",
@@ -107,22 +99,16 @@ const Signup = () => {
             secretKey: "",
             phone: "",
           });
-          setErrors({});
+          clearErrors();
         } else if (response.status === 400) {
-          newErrors.server = data.message || "User already exists!";
+          newErrors.server = "User already exists!";
           setErrors(newErrors);
         } else {
-          setSnackbarMessage("Signup failed. Please try again.");
-          setSnackbarSeverity("error");
-          setOpenSnackbar(true);
+          setSuccessMessage("Signup failed. Please try again.");
         }
       } catch (error) {
         console.error("Error:", error);
-        setSnackbarMessage("Signup failed. Please try again.");
-        setSnackbarSeverity("error");
-        setOpenSnackbar(true);
-      } finally {
-        setLoading(false); // Stop loading
+        setSuccessMessage("Signup failed. Please try again.");
       }
     } else {
       setErrors(newErrors);
@@ -130,23 +116,16 @@ const Signup = () => {
   };
 
   return (
-    <Container component="main" sx={{ marginTop: 4 }} maxWidth="xs">
+    <Container component="main" className="form-container" maxWidth="xs">
       <CssBaseline />
-      <Paper
-        sx={{
-          padding: 2,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+      <Paper className="MuiPaper-root">
+        <Avatar className="MuiAvatar-root">
           <LockOutlinedIcon />
         </Avatar>
-        <Typography variant="h5" textAlign="center" gutterBottom>
-          Sign Up
+        <Typography variant="h1" gutterBottom>
+          Sign up
         </Typography>
-        <form noValidate onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
@@ -160,7 +139,6 @@ const Signup = () => {
                 required
               />
             </Grid>
-
             <Grid item xs={12}>
               <TextField
                 name="email"
@@ -173,7 +151,6 @@ const Signup = () => {
                 required
               />
             </Grid>
-
             <Grid item xs={12}>
               <TextField
                 name="phone"
@@ -186,7 +163,6 @@ const Signup = () => {
                 required
               />
             </Grid>
-
             <Grid item xs={12}>
               <TextField
                 name="role"
@@ -229,7 +205,6 @@ const Signup = () => {
                 required
               />
             </Grid>
-
             <Grid item xs={12}>
               <TextField
                 name="confirmPassword"
@@ -250,23 +225,22 @@ const Signup = () => {
             variant="contained"
             color="primary"
             fullWidth
-            sx={{ mt: 2 }}
-            disabled={loading} // Disable button during loading
+            className="MuiButton-root"
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Signup"} {/* Show loading spinner */}
+            Sign Up
           </Button>
         </form>
 
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={3000}
-          onClose={() => setOpenSnackbar(false)}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        >
-          <Alert severity={snackbarSeverity} onClose={() => setOpenSnackbar(false)}>
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
+        {errors.server && (
+          <Typography variant="body2" color="error" className="MuiTypography-body2">
+            {errors.server}
+          </Typography>
+        )}
+        {successMessage && (
+          <Typography variant="body2" color="green" className="MuiTypography-body2">
+            {successMessage}
+          </Typography>
+        )}
       </Paper>
     </Container>
   );
