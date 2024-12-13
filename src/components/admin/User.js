@@ -15,23 +15,21 @@ const User = () => {
     fetchUsers();
   }, []);
 
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      setError('');
-      const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com';
-      console.log('API URL:', apiUrl);
-      const response = await axios.get(`${apiUrl}/api/users`);
-      console.log('Fetched users:', response.data);
-      setUsers(response.data); // Update state with fetched users
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      setError('Failed to fetch users. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+ const fetchUsers = async () => {
+     try {
+       setLoading(true); // Start loading
+       setError(''); // Reset error
+       const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com'; // Use environment variable
+       const response = await axios.get(`${apiUrl}/api/users`);
+       console.log('Fetched Users:', response.data); // Debugging logs
+       setUsers(response.data); // Update state with fetched users
+     } catch (error) {
+       console.error('Error fetching users:', error);
+       setError('Failed to fetch users. Please try again later.');
+     } finally {
+       setLoading(false); // Stop loading
+     }
+   };
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
     setCurrentPage(1); // Reset to first page when search term changes
