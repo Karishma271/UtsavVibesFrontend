@@ -43,7 +43,7 @@ const VenueList = () => {
               <Link to={`/fhalls/${venue._id}`}>
                 <img
                   // Update the image URL by concatenating the backend URL
-                  src={venue.imageUrl ? `${process.env.REACT_APP_BACKEND_URL}/uploads/${venue.imageUrl}` : '/default-image.jpg'}
+                  src={venue.imageUrl ? `${process.env.REACT_APP_BACKEND_URL}${venue.imageUrl}` : '/default-image.jpg'}
                   alt={`${venue.venueName} hall`}
                   className="fpImg"
                 />
