@@ -41,13 +41,10 @@ const VenueList = () => {
           venues.map((venue) => (
             <div className="fpItem" key={venue._id}>
               <Link to={`/fhalls/${venue._id}`}>
-                <img src={venue.imageUrl} alt={venue.venueName} 
-                  // Update the image URL by concatenating the backend URL
-                  //src={venue.imageUrl ? `${process.env.REACT_APP_BACKEND_URL}${venue.imageUrl}` : '/default-image.jpg'}
-                  //alt={`${venue.venueName} hall`}
-                  //className="fpImg"
-                  
-                />
+              <img 
+  src={venue.imageUrl ? venue.imageUrl : '/default-image.jpg'} 
+  alt={venue.venueName} 
+/>
               </Link>
               <span className="fpName">{venue.venueName}</span>
               <span className="fpCity">
