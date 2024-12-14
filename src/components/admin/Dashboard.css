@@ -127,7 +127,7 @@ body {
 
 .actions-buttons button:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+  box-shadow: 0 0 0 3px #d32f2f(0, 123, 255, 0.5);
 }
 
 

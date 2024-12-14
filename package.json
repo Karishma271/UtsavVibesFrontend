@@ -2,6 +2,7 @@
   "name": "utsavvibes",
   "version": "0.1.0",
   "private": true,
+  "author": "karishmapatel",
   "engines": {
     "node": "22.x"
   },
