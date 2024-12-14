@@ -26,6 +26,7 @@ const VenueList = ({ venues, setVenues }) => {
         //} else {
           //throw new Error("Failed to delete venue");
         //}
+        window.location.reload();
       } catch (error) {
         console.error("Error deleting venue:", error);
         alert("Failed to delete the venue. Please try again.");
