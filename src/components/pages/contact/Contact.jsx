@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TextField, Button, Grid, Typography, Snackbar, Alert } from "@mui/material";
-import "./contact.css";
+import "./contact.css"; // Make sure to include the appropriate CSS file for styling
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -83,18 +83,17 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="container">
+    <div className="contact-container">
       <Typography textAlign="center" variant="h4" fontSize="2.5rem" gutterBottom>
         Contact Us
       </Typography>
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
+      <form onSubmit={handleSubmit} className="contact-form">
+        <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
             <TextField
               label="Name"
               name="name"
               fullWidth
-              required
               variant="outlined"
               value={formData.name}
               onChange={handleChange}
@@ -107,7 +106,6 @@ const ContactForm = () => {
               label="Phone Number"
               name="phoneNumber"
               fullWidth
-              required
               variant="outlined"
               value={formData.phoneNumber}
               onChange={handleChange}
@@ -120,7 +118,6 @@ const ContactForm = () => {
               label="Email"
               name="email"
               fullWidth
-              required
               variant="outlined"
               value={formData.email}
               onChange={handleChange}
@@ -133,7 +130,6 @@ const ContactForm = () => {
               label="Subject"
               name="subject"
               fullWidth
-              required
               variant="outlined"
               value={formData.subject}
               onChange={handleChange}
@@ -146,7 +142,6 @@ const ContactForm = () => {
               label="Message"
               name="message"
               fullWidth
-              required
               variant="outlined"
               multiline
               rows={4}
