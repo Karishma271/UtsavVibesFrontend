@@ -14,12 +14,18 @@ const VenueList = ({ venues, setVenues }) => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this venue?")) {
       try {
-        setDeletingId(id); // Set deleting state
-        await axios.delete(
+        setDeletingId(id); // Set deleting state to show "Deleting..." button
+        const response = await axios.delete(
           `https://utsavvibesbackend.onrender.com/api/venues/${id}`
         );
-        // Update local venues state without page reload
-        setVenues((prevVenues) => prevVenues.filter((venue) => venue._id !== id));
+  
+        // Check if the response status indicates success
+        if (response.status === 200) {
+          // Update local venues state without page reload
+          setVenues((prevVenues) => prevVenues.filter((venue) => venue._id !== id));
+        } else {
+          throw new Error("Failed to delete venue");
+        }
       } catch (error) {
         console.error("Error deleting venue:", error);
         alert("Failed to delete the venue. Please try again.");
@@ -28,6 +34,7 @@ const VenueList = ({ venues, setVenues }) => {
       }
     }
   };
+  
 
   const handleAdd = () => {
     navigate("/Venues/new"); // Redirect to Add Venue form
