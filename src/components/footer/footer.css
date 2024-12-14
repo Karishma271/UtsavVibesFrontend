@@ -1,11 +1,66 @@
-.visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
+/* Footer Container */
+footer {
+  background-color: #333333;
+  color: white;
+  padding: 20px 0;
+  width: 100%;
+  position: relative;
+}
+
+/* Main content area */
+.main-content {
+  min-height: calc(100vh - 80px); /* Adjust based on footer height */
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px; /* Ensuring content has space above the footer */
+}
+
+/* Footer Text */
+footer .footer-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  margin-bottom: 10px; /* Space below text on small screens */
+}
+
+/* Social Media Links */
+footer .social-media-links {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap; /* Ensure items wrap on smaller screens */
+}
+
+footer .social-media-links a {
+  text-decoration: none;
+  color: white;
+  margin-right: 20px;
+  font-size: 24px;
+  transition: color 0.3s ease; /* Smooth transition on hover */
+}
+
+footer .social-media-links a:hover {
+  color: #7848f4; /* Change color on hover */
+}
+
+/* Align Footer Content */
+footer .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  flex-wrap: wrap; /* Stack items on smaller screens */
+}
+
+/* Center social media icons on small screens */
+@media (max-width: 600px) {
+  footer .social-media-links {
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px; /* Space above the social media links */
   }
-  
+
+  footer .footer-text {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 20px; /* Space between footer text and social links */
+  }
+}
