@@ -7,26 +7,20 @@ footer {
   position: relative;
 }
 
-/* Main content area */
-.main-content {
-  min-height: calc(100vh - 80px); /* Adjust based on footer height */
-  display: flex;
-  flex-direction: column;
-  padding-top: 20px; /* Ensuring content has space above the footer */
-}
-
-/* Footer Text */
+/* Footer Text Section */
 footer .footer-text {
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
-  margin-bottom: 10px; /* Space below text on small screens */
+  text-align: center;
+  margin-bottom: 10px;
 }
 
-/* Social Media Links */
+/* Social Media Links Section */
 footer .social-media-links {
   display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap; /* Ensure items wrap on smaller screens */
+  justify-content: center; /* Center align social icons */
+  flex-wrap: wrap; /* Wrap icons on small screens */
+  margin-top: 10px; /* Space between text and social media links */
 }
 
 footer .social-media-links a {
@@ -41,17 +35,22 @@ footer .social-media-links a:hover {
   color: #7848f4; /* Change color on hover */
 }
 
-/* Align Footer Content */
+/* Flexbox Layout for Footer */
 footer .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  flex-wrap: wrap; /* Stack items on smaller screens */
+  flex-wrap: wrap; /* Ensure items stack on smaller screens */
 }
 
-/* Center social media icons on small screens */
+/* Mobile View - Stack footer elements */
 @media (max-width: 600px) {
+  footer .container {
+    flex-direction: column;
+    align-items: center;
+  }
+
   footer .social-media-links {
     justify-content: center;
     width: 100%;
@@ -60,7 +59,6 @@ footer .container {
 
   footer .footer-text {
     text-align: center;
-    width: 100%;
     margin-bottom: 20px; /* Space between footer text and social links */
   }
 }
