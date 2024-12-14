@@ -1,103 +1,85 @@
-/* Wrapper for the entire page */
+/* General Wrapper */
 .hallWrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     padding: 20px;
-    margin: 20px auto;
-    max-width: 1200px;
-    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
   }
   
-  /* Title of the venue */
+  /* Title Styling */
   .hallTitle {
     font-size: 2.5rem;
     font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
+    margin-bottom: 15px;
     color: #333;
   }
   
-  /* Address and location */
+  /* Address Styling */
   .hallAddress {
     display: flex;
     align-items: center;
-    font-size: 1.2rem;
+    margin-bottom: 15px;
     color: #555;
-    margin-bottom: 20px;
   }
   
   .hallAddress svg {
-    margin-right: 10px;
+    margin-right: 8px;
   }
   
-  /* Image wrapper */
+  /* Images Styling */
   .hallImages {
-    display: flex;
-    justify-content: center;
     margin-bottom: 20px;
-    width: 100%;
-  }
-  
-  .hallImgWrapper {
-    width: 100%;
-    max-width: 800px;
-    height: 400px;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
   }
   
   .hallImg {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    max-width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
-  /* Capacity section */
+  /* Capacity */
   .fpName {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: bold;
+    color: #555;
     display: flex;
     align-items: center;
-    color: #555;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
   
   .fpName svg {
-    margin-left: 8px;
+    margin-left: 5px;
   }
   
-  /* Details section */
+  /* Hall Details */
   .hallDetails {
-    width: 100%;
-    max-width: 800px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
-  }
-  
-  .hallDetailsPrice {
-    margin-bottom: 20px;
-  }
-  
-  .hallDetailsPrice h1 {
-    font-size: 1.5rem;
+    margin-top: 20px;
     color: #333;
+  }
+  
+  .hallDetails h2 {
+    font-size: 1.5rem;
     margin-bottom: 10px;
   }
   
-  .hallDetailsPrice span {
+  .hallDetails p {
     font-size: 1.1rem;
-    color: #777;
     line-height: 1.6;
+    margin-bottom: 20px;
   }
   
-  /* Button styling */
+  /* Button Styling */
+  .hallDetailsPrice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
   button {
-    background-color: #4CAF50;
+    background-color: #f44336;
     color: white;
     border: none;
     padding: 12px 20px;
@@ -106,67 +88,11 @@
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    display: block;
+    margin-top: 20px;
   }
   
   button:hover {
-    background-color: #45a049;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .hallWrapper {
-      padding: 15px;
-    }
-  
-    .hallTitle {
-      font-size: 2rem;
-    }
-  
-    .hallAddress {
-      font-size: 1rem;
-    }
-  
-    .hallImgWrapper {
-      height: 250px;
-    }
-  
-    .hallDetails {
-      width: 100%;
-    }
-  
-    .hallDetailsPrice h1 {
-      font-size: 1.3rem;
-    }
-  
-    .hallDetailsPrice span {
-      font-size: 1rem;
-    }
-  
-    button {
-      font-size: 1rem;
-      padding: 10px 15px;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .hallTitle {
-      font-size: 1.8rem;
-    }
-  
-    .hallAddress {
-      font-size: 0.9rem;
-    }
-  
-    .hallImgWrapper {
-      height: 200px;
-    }
-  
-    .hallDetailsPrice h1 {
-      font-size: 1.1rem;
-    }
-  
-    .hallDetailsPrice span {
-      font-size: 0.9rem;
-    }
+    background-color: #e53935;
   }
   
