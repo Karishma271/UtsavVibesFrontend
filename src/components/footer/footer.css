@@ -1,64 +1,75 @@
-/* Footer Container */
-footer {
+/* General Footer Styles */
+.footer {
   background-color: #333333;
   color: white;
   padding: 20px 0;
   width: 100%;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Container to organize footer elements */
+.footer-container {
+  width: 100%;
+  max-width: 1200px; /* Max width for large screens */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Footer Text Section */
-footer .footer-text {
+.footer-text {
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 /* Social Media Links Section */
-footer .social-media-links {
+.footer-social {
   display: flex;
-  justify-content: center; /* Center align social icons */
-  flex-wrap: wrap; /* Wrap icons on small screens */
-  margin-top: 10px; /* Space between text and social media links */
+  justify-content: center;
+  gap: 20px; /* Space between icons */
+  margin-bottom: 20px;
 }
 
-footer .social-media-links a {
-  text-decoration: none;
+.footer-social a {
   color: white;
-  margin-right: 20px;
-  font-size: 24px;
-  transition: color 0.3s ease; /* Smooth transition on hover */
+  font-size: 30px;
+  text-decoration: none;
 }
 
-footer .social-media-links a:hover {
-  color: #7848f4; /* Change color on hover */
+.footer-social a:hover {
+  color: #7848f4; /* Change to a different color on hover */
 }
 
-/* Flexbox Layout for Footer */
-footer .container {
+/* Footer Button Section */
+.footer-buttons {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-  flex-wrap: wrap; /* Ensure items stack on smaller screens */
+  justify-content: center;
+  gap: 20px;
 }
 
-/* Mobile View - Stack footer elements */
+.footer-btn {
+  font-size: 16px;
+}
+
+/* Responsive Styling for Smaller Screens */
 @media (max-width: 600px) {
-  footer .container {
+  .footer-container {
     flex-direction: column;
     align-items: center;
-  }
-
-  footer .social-media-links {
-    justify-content: center;
-    width: 100%;
-    margin-top: 10px; /* Space above the social media links */
-  }
-
-  footer .footer-text {
     text-align: center;
-    margin-bottom: 20px; /* Space between footer text and social links */
+  }
+
+  .footer-social {
+    gap: 10px; /* Adjust space between icons */
+  }
+
+  .footer-buttons {
+    flex-direction: column;
+    gap: 10px;
   }
 }
