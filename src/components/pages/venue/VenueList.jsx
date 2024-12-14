@@ -30,29 +30,32 @@ const VenueList = () => {
 
   return (
     <div>
-      
-        <Typography variant="h1" fontSize="3rem" mb={4} gutterBottom>
-          Venues
-        </Typography>
-        <div className="fp">
+      <Typography
+        variant="h1"
+        fontSize="3rem"
+        mb={4}
+        gutterBottom
+        style={{ textAlign: 'center' }} // Center align the "Venues" text
+      >
+        Venues
+      </Typography>
+      <div className="fp">
         {error && <Typography color="error">{error}</Typography>}
 
         {venues.length > 0 ? (
           venues.map((venue) => (
             <div className="fpItem" key={venue._id}>
               <Link to={`/fhalls/${venue._id}`}>
-                <img 
+                <img
                   src={venue.imageUrl || '/path/to/default/image.jpg'} // Use a fallback image if no image is provided
-                  alt={venue.venueName} 
+                  alt={venue.venueName}
                 />
               </Link>
               <span className="fpName">{venue.venueName}</span>
               <span className="fpCity">
                 <LocationOnIcon /> {venue.address}
               </span>
-              <span className="fpOccasion">
-                Event: {venue.occasionType}
-              </span>
+              <span className="fpOccasion">Event: {venue.occasionType}</span>
               <span className="fpCapacity">
                 Capacity: {venue.capacity || 'N/A'} <GroupsIcon />
               </span>
