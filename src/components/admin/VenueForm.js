@@ -15,10 +15,9 @@ const VenueForm = () => {
     address: '',
     capacity: '',
     acceptedPayments: [],
-    imageUrl: '', // Store image URL for updating
+    imageUrl: '', // Store image URL directly
   });
 
-  const [imageFile, setImageFile] = useState(null); // Selected image file
   const [previewImage, setPreviewImage] = useState(null); // Image preview
   const [isUpdateMode, setIsUpdateMode] = useState(false); // Track if we are in update mode
   const [loading, setLoading] = useState(false); // Loading state for form submission
@@ -51,6 +50,11 @@ const VenueForm = () => {
       ...prevData,
       [name]: value,
     }));
+
+    // If updating the image URL, update the preview as well
+    if (name === 'imageUrl') {
+      setPreviewImage(value); // Update preview for image URL
+    }
   };
 
   // Handle accepted payments changes (multiple select)
@@ -62,22 +66,18 @@ const VenueForm = () => {
     }));
   };
 
-  // Handle image file selection and preview
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImageFile(file);
-
-    // Display image preview
-    const reader = new FileReader();
-    reader.onloadend = () => setPreviewImage(reader.result);
-    reader.readAsDataURL(file);
-  };
-
   // Validate form inputs
   const validateForm = () => {
-    const { venueName, occasionType, address } = formData;
-    if (!venueName.trim() || !occasionType || !address.trim()) {
+    const { venueName, occasionType, address, imageUrl } = formData;
+    if (!venueName.trim() || !occasionType || !address.trim() || !imageUrl.trim()) {
       alert('Please fill in all required fields before submitting.');
+      return false;
+    }
+
+    // Validate image URL format
+    const urlRegex = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg))$/i;
+    if (!urlRegex.test(imageUrl.trim())) {
+      alert('Please provide a valid image URL.');
       return false;
     }
     return true;
@@ -93,22 +93,9 @@ const VenueForm = () => {
     setMessage('');
 
     try {
-      let imageUrl = '';
+      // Submit form data including image URL
+      const updatedData = { ...formData };
 
-      // If an image file is selected, upload it first
-      if (imageFile) {
-        const formData = new FormData();
-        formData.append('image', imageFile);
-        const response = await axios.post(`${apiUrl}/api/upload-image`, formData);
-        imageUrl = response.data.imageUrl; // Get the image URL from the response
-      } else {
-        imageUrl = previewImage; // If no new image is selected, use the existing image URL
-      }
-
-      // Prepare data for submission
-      const updatedData = { ...formData, imageUrl };
-
-      // Update or create venue based on whether we're in update mode
       if (isUpdateMode) {
         await axios.put(`${apiUrl}/api/venues/${id}`, updatedData);
         setMessage('Venue updated successfully!');
@@ -124,7 +111,6 @@ const VenueForm = () => {
       setMessage('An error occurred while saving the venue. Please try again.');
     } finally {
       setLoading(false);
-      setImageFile(null); // Clear the image file after submission
     }
   };
 
@@ -202,9 +188,16 @@ const VenueForm = () => {
           ))}
         </select>
 
-        {/* Image Upload */}
-        <label>Image:</label>
-        <input type="file" accept="image/*" onChange={handleImageChange} />
+        {/* Image URL */}
+        <label>Image URL:</label>
+        <input
+          type="text"
+          name="imageUrl"
+          value={formData.imageUrl}
+          onChange={handleChange}
+          placeholder="Enter an image URL"
+          required
+        />
 
         {/* Image Preview */}
         {previewImage && (
