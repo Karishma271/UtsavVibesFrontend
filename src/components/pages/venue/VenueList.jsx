@@ -1,54 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import './venueList.css';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import GroupsIcon from '@mui/icons-material/Groups';
+import PaymentIcon from '@mui/icons-material/Payment';
 
 const VenueList = () => {
-  const [venues, setVenues] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com';
+  const [venues, setVenues] = useState([]); // State for storing venues
+  const [error, setError] = useState(null); // State for handling errors
 
   useEffect(() => {
-    // Fetch all venues from the backend
-    axios
-      .get(`${apiUrl}/api/venues`)
-      .then((response) => {
-        setVenues(response.data); // Store venue data
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching venues:', error);
-        setLoading(false);
-      });
-  }, [apiUrl]);
+    // Fetch venues from backend API
+    const fetchVenues = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/venues`
+        );
+        setVenues(response.data); // Set fetched data
+      } catch (err) {
+        console.error('Error loading venue data:', err);
+        setError('Error loading venue data. Please try again later.');
+      }
+    };
 
-  if (loading) {
-    return <p>Loading venues...</p>;
-  }
+    fetchVenues();
+  }, []);
 
   return (
-    <div className="venue-list-container">
-      <h2>Venue List</h2>
-      {venues.length === 0 ? (
-        <p>No venues available</p>
-      ) : (
-        <div className="venue-list">
-          {venues.map((venue) => (
-            <div key={venue._id} className="venue-card">
-              <h3>{venue.venueName}</h3>
-              {venue.imageUrl && (
+    <div>
+      <div className="fp">
+        <Typography variant="h1" fontSize="3rem" mb={4} gutterBottom>
+          Venues
+        </Typography>
+
+        {error && <Typography color="error">{error}</Typography>}
+
+        {venues.length > 0 ? (
+          venues.map((venue) => (
+            <div className="fpItem" key={venue._id}>
+              <Link to={`/fhalls/${venue._id}`}>
                 <img
-                  src={venue.imageUrl}
-                  alt={venue.venueName}
-                  style={{ width: '200px', height: '200px', objectFit: 'cover' }}
+                  // Update the image URL by concatenating the backend URL
+                  src={venue.imageUrl ? `${process.env.REACT_APP_BACKEND_URL}/uploads/${venue.imageUrl}` : '/default-image.jpg'}
+                  alt={`${venue.venueName} hall`}
+                  className="fpImg"
                 />
+              </Link>
+              <span className="fpName">{venue.venueName}</span>
+              <span className="fpCity">
+                <LocationOnIcon /> {venue.address}
+              </span>
+              <span className="fpOccasion">
+                Event: {venue.occasionType}
+              </span>
+              <span className="fpCapacity">
+                Capacity: {venue.capacity || 'N/A'} <GroupsIcon />
+              </span>
+              {venue.acceptedPayments?.length > 0 && (
+                <span className="fpPayments">
+                  <PaymentIcon /> Accepted Payments:{' '}
+                  {venue.acceptedPayments.join(', ')}
+                </span>
               )}
-              <p>{venue.description}</p>
-              <Link to={`/venues/${venue._id}`}>View Details</Link>
+              <span className="fpDescription">
+                {venue.description || 'No description available.'}
+              </span>
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        ) : (
+          <p>No venues available.</p>
+        )}
+      </div>
     </div>
   );
 };
