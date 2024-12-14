@@ -1,165 +1,92 @@
-/* General container for the page */
+/* venueList.css */
+
+/* Container for the entire venue list */
 .fp {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 1200px; /* Limit max width to reduce excessive white space */
   padding: 20px;
-  margin-top: 20px;
-  background-color: #f4f4f4;
 }
 
-/* Typography styling */
-.fp h1 {
-  font-size: 3rem;
-  font-weight: bold;
-  margin-bottom: 30px;
-  text-align: center;
-  color: #333;
-}
-
-.fp p {
-  font-size: 1rem;
-  color: #666;
-  text-align: center;
-}
-
-/* For error messages */
-.fp .MuiTypography-colorError {
-  font-size: 1.2rem;
-  color: red;
-  text-align: center;
-  margin-top: 20px;
-}
-
-/* Styling for each venue item */
+/* Style for each venue item */
 .fpItem {
-  width: 90%;
-  max-width: 1200px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: calc(33.333% - 20px); /* 3 columns layout */
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  position: relative;
 }
 
-.fpItem:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-}
-
-/* Venue image styling */
+/* Ensures that the image takes up proper space */
 .fpItem img {
   width: 100%;
-  height: auto;
-  border-radius: 10px;
-  object-fit: cover;
-  margin-bottom: 20px;
-  max-height: 400px; /* Limit max height for images */
+  height: 200px; /* Set fixed height for consistency */
+  object-fit: cover; /* Ensures the image is cropped correctly */
+  display: block;
 }
 
-/* Styling for venue name */
+/* Title of the venue */
 .fpName {
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
+  margin: 10px;
 }
 
-/* Address styling */
-.fpCity {
-  display: flex;
-  align-items: center;
+/* Address and other venue details */
+.fpCity, .fpOccasion, .fpCapacity, .fpPayments, .fpDescription {
+  display: block;
+  margin: 8px 10px;
+  color: #555;
+}
+
+.fpCity, .fpOccasion {
   font-size: 1rem;
-  color: #777;
-  margin-bottom: 10px;
 }
 
-/* Occasion type styling */
-.fpOccasion {
-  font-size: 1.2rem;
-  color: #555;
-  margin-bottom: 10px;
-}
-
-/* Capacity styling */
-.fpCapacity {
-  font-size: 1.2rem;
-  color: #555;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-}
-
-/* Payments accepted styling */
+/* Payment icons */
 .fpPayments {
-  font-size: 1.1rem;
-  color: #555;
-  margin-bottom: 10px;
   display: flex;
   align-items: center;
+  font-size: 0.9rem;
+  color: #777;
 }
 
-/* Description styling */
+.fpPayments svg {
+  margin-right: 5px;
+}
+
+/* If the description is present, it should be styled nicely */
 .fpDescription {
-  font-size: 1rem;
-  color: #555;
-  margin-top: 10px;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0 10px 10px;
 }
 
-/* Media Queries for responsiveness */
+/* Handle no image condition */
+.noImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ccc;
+  color: #fff;
+  height: 200px;
+  text-align: center;
+}
+
+/* For better mobile responsiveness */
 @media (max-width: 768px) {
-  .fp {
-    padding: 10px;
-  }
-
   .fpItem {
-    width: 100%;
-    padding: 15px;
-  }
-
-  .fp h1 {
-    font-size: 2.5rem;
-  }
-
-  .fpName {
-    font-size: 1.4rem;
-  }
-
-  .fpCity,
-  .fpOccasion,
-  .fpCapacity,
-  .fpPayments {
-    font-size: 1rem;
+    width: calc(50% - 10px); /* 2 columns on small screens */
   }
 }
 
 @media (max-width: 480px) {
-  .fp {
-    padding: 5px;
-  }
-
   .fpItem {
-    width: 100%;
-    padding: 10px;
-  }
-
-  .fp h1 {
-    font-size: 2rem;
-  }
-
-  .fpName {
-    font-size: 1.2rem;
-  }
-
-  .fpCity,
-  .fpOccasion,
-  .fpCapacity,
-  .fpPayments {
-    font-size: 0.9rem;
+    width: 100%; /* Single column on mobile */
   }
 }

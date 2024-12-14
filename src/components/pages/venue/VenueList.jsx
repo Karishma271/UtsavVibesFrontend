@@ -41,9 +41,9 @@ const VenueList = () => {
           venues.map((venue) => (
             <div className="fpItem" key={venue._id}>
               <Link to={`/fhalls/${venue._id}`}>
-                <img src={venue.imageUrl} alt={venue.venueName} 
-                 
-                  
+                <img 
+                  src={venue.imageUrl || '/path/to/default/image.jpg'} // Use a fallback image if no image is provided
+                  alt={venue.venueName} 
                 />
               </Link>
               <span className="fpName">{venue.venueName}</span>
