@@ -1,25 +1,26 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React from "react";
+import "./listFeatured.css";
+import useFetch from "../../hooks/useFetch";
+import { useLocation, useNavigate } from "react-router-dom";
 import GroupsIcon from '@mui/icons-material/Groups';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import useFetch from '../../hooks/useFetch'; // Import the useFetch hook
-import './listFeatured.css';
 
 const ListFeatured = () => {
   const navigate = useNavigate();
   const path = '/CheckoutPage';
+
   const location = useLocation();
-  const id = location.pathname.split("/")[2];  // Get the venue ID from the URL
+  const id = location.pathname.split("/")[2]; // Extract the ID from the URL path
+  console.log('ID:', id); // Debugging log to check if the ID is correct
 
-  // Use the custom useFetch hook to get data from the backend
-  const { data, error } = useFetch(`${process.env.REACT_APP_BACKEND_URL}/halls/find/${id}`);
+  const { data, loading, error } = useFetch(`${process.env.REACT_APP_BACKEND_URL}/api/halls/find/${id}`);
 
-  if (error) {
-    return <div>Error: {error}</div>;  // Handle errors here
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
-  if (!data) {
-    return <div>Loading...</div>;  // Show loading while data is being fetched
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
   return (

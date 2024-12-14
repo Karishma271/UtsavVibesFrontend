@@ -1,23 +1,15 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-
-const useFetch = (url) => {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(url);
-        setData(response.data);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-    fetchData();
-  }, [url]);
-
-  return { data, error };
+const fetchData = async () => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    setData(data);
+  } catch (error) {
+    console.error('Fetch error:', error);  // Log the error to the console
+    setError(error.message);
+  } finally {
+    setLoading(false);
+  }
 };
-
-export default useFetch;
