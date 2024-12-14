@@ -1,20 +1,39 @@
 import "./listFeatured.css";
-import useFetch from "../../hooks/useFetch";
-import { useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import GroupsIcon from "@mui/icons-material/Groups";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import { useNavigate } from "react-router-dom";
 
 const ListFeatured = () => {
-  const navigate = useNavigate();
-  const path = "/CheckoutPage";
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  const navigate = useNavigate();
   const location = useLocation();
   const id = location.pathname.split("/")[2];
 
-  const { data, loading, error } = useFetch(`/halls/find/${id}`);
+  console.log("Extracted ID:", id); // Debug the extracted ID
 
-  // Handle loading or error state
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log(`Fetching data for ID: ${id}`); // Debug the request
+        const response = await axios.get(`/halls/find/${id}`);
+        console.log("API Response:", response.data); // Debug the API response
+        setData(response.data);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchData();
+  }, [id]);
+
   if (loading) return <div>Loading...</div>;
   if (error || !data) return <div>Error loading venue details</div>;
 
@@ -43,7 +62,7 @@ const ListFeatured = () => {
           <div className="hallDetailsPrice">
             <h1>Description</h1>
             <span>{data.description || "No description available."}</span>
-            <button onClick={() => navigate(path)}>Book Now!</button>
+            <button onClick={() => navigate("/CheckoutPage")}>Book Now!</button>
           </div>
         </div>
       </div>
