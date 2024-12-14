@@ -40,14 +40,13 @@ const VenueList = () => {
         {venues.length > 0 ? (
           venues.map((venue) => (
             <div className="fpItem" key={venue._id}>
-              <Link to={`/fhalls/${venue._id}`} className="venue-link">
-              {/* Display image with fallback to default if not available */}
-              <img 
-                src={venue.imageUrl ? venue.imageUrl : '/default-image.jpg'} 
-                alt={venue.venueName} 
-                className="venue-image"
-              />
-            </Link>
+              <Link to={`/fhalls/${venue._id}`}>
+              <img
+    src={venue.imageUrl}
+    alt={venue.venueName}
+    style={{ width: '100%', height: 'auto' }}
+  />
+              </Link>
               <span className="fpName">{venue.venueName}</span>
               <span className="fpCity">
                 <LocationOnIcon /> {venue.address}
