@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./listFeatured.css";
-import useFetch from "../../hooks/useFetch";
+import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import GroupsIcon from '@mui/icons-material/Groups';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -11,14 +11,35 @@ const ListFeatured = () => {
 
   const location = useLocation();
   const id = location.pathname.split("/")[2]; // Extract the ID from the URL path
-  console.log('ID:', id); // Debugging log to check if the ID is correct
 
-  const { data, loading, error } = useFetch(`${process.env.REACT_APP_BACKEND_URL}/api/halls/find/${id}`);
+  // State for storing the venue data, loading state, and error state
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  useEffect(() => {
+    // Fetch venue data from the server
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/halls/find/${id}`);
+        setData(response.data); // Set fetched data
+      } catch (err) {
+        console.error("Error fetching venue data:", err);
+        setError("Failed to fetch venue details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  // Display loading message if data is still being fetched
   if (loading) {
     return <div>Loading...</div>;
   }
 
+  // Display error message if there's an error
   if (error) {
     return <div>Error: {error}</div>;
   }
