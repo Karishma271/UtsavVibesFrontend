@@ -1,93 +1,53 @@
-import React, { useEffect, useState } from 'react';
-import { Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './venueList.css';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import GroupsIcon from '@mui/icons-material/Groups';
-import PaymentIcon from '@mui/icons-material/Payment';
+import { Link } from 'react-router-dom';
 
 const VenueList = () => {
-  const [venues, setVenues] = useState([]); // State for storing venue list
-  const [error, setError] = useState(null); // State for error handling
-  const placeholderImage = '/images/placeholder.jpg'; // Placeholder for missing images
+  const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com';
 
   useEffect(() => {
-    // Fetch venues from the backend
-    const fetchVenues = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/venues`
-        );
-        setVenues(response.data); // Set fetched data to state
-      } catch (err) {
-        console.error('Error loading venue data:', err);
-        setError('Failed to load venue data. Please try again later.');
-      }
-    };
+    // Fetch all venues from the backend
+    axios
+      .get(`${apiUrl}/api/venues`)
+      .then((response) => {
+        setVenues(response.data); // Store venue data
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching venues:', error);
+        setLoading(false);
+      });
+  }, [apiUrl]);
 
-    fetchVenues();
-  }, []);
+  if (loading) {
+    return <p>Loading venues...</p>;
+  }
 
   return (
     <div className="venue-list-container">
-      <Typography variant="h1" fontSize="3rem" mb={4} gutterBottom>
-        Available Venues
-      </Typography>
-
-      {/* Show error message if data fails to load */}
-      {error && <Typography color="error">{error}</Typography>}
-
-      {/* Check for venues */}
-      {venues.length > 0 ? (
-        <div className="venue-cards">
+      <h2>Venue List</h2>
+      {venues.length === 0 ? (
+        <p>No venues available</p>
+      ) : (
+        <div className="venue-list">
           {venues.map((venue) => (
-            <div className="venue-card" key={venue._id}>
-              {/* Venue Image */}
-              <Link to={`/fhalls/${venue._id}`}>
+            <div key={venue._id} className="venue-card">
+              <h3>{venue.venueName}</h3>
+              {venue.imageUrl && (
                 <img
-                  src={venue.imageUrl || placeholderImage} // Use uploaded image or fallback
-                  alt={`${venue.venueName} Venue`}
-                  className="venue-image"
+                  src={venue.imageUrl}
+                  alt={venue.venueName}
+                  style={{ width: '200px', height: '200px', objectFit: 'cover' }}
                 />
-              </Link>
-
-              {/* Venue Name */}
-              <Typography variant="h6" className="venue-name">
-                {venue.venueName}
-              </Typography>
-
-              {/* Address */}
-              <Typography variant="body2" className="venue-address">
-                <LocationOnIcon /> {venue.address || 'Address not available'}
-              </Typography>
-
-              {/* Occasion Type */}
-              <Typography variant="body2" className="venue-occasion">
-                Event: {venue.occasionType || 'N/A'}
-              </Typography>
-
-              {/* Capacity */}
-              <Typography variant="body2" className="venue-capacity">
-                <GroupsIcon /> Capacity: {venue.capacity || 'N/A'}
-              </Typography>
-
-              {/* Accepted Payments */}
-              {venue.acceptedPayments?.length > 0 && (
-                <Typography variant="body2" className="venue-payments">
-                  <PaymentIcon /> Accepted Payments: {venue.acceptedPayments.join(', ')}
-                </Typography>
               )}
-
-              {/* Description */}
-              <Typography variant="body2" className="venue-description">
-                {venue.description || 'No description available.'}
-              </Typography>
+              <p>{venue.description}</p>
+              <Link to={`/venues/${venue._id}`}>View Details</Link>
             </div>
           ))}
         </div>
-      ) : (
-        <Typography>No venues available at the moment.</Typography>
       )}
     </div>
   );

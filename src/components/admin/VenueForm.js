@@ -7,7 +7,7 @@ const VenueForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Form Data State
+  // Form data state
   const [formData, setFormData] = useState({
     occasionType: '',
     venueName: '',
@@ -15,13 +15,13 @@ const VenueForm = () => {
     address: '',
     capacity: '',
     acceptedPayments: [],
-    imageUrl: '', // Image URL for updating
+    imageUrl: '', // Store image URL for updating
   });
 
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFile, setImageFile] = useState(null); // Selected image file
   const [previewImage, setPreviewImage] = useState(null); // Image preview
-  const [isUpdateMode, setIsUpdateMode] = useState(false); // Determine if updating
-  const [loading, setLoading] = useState(false); // Loading state
+  const [isUpdateMode, setIsUpdateMode] = useState(false); // Track if we are in update mode
+  const [loading, setLoading] = useState(false); // Loading state for form submission
   const [message, setMessage] = useState(''); // Feedback message
 
   // Dropdown options
@@ -30,21 +30,21 @@ const VenueForm = () => {
 
   const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com';
 
-  // Fetch venue details for update
+  // Fetch venue details for update (if in update mode)
   useEffect(() => {
     if (id) {
       axios
         .get(`${apiUrl}/api/venues/${id}`)
         .then((response) => {
           setFormData(response.data);
-          setPreviewImage(response.data.imageUrl); // Set image preview for update
+          setPreviewImage(response.data.imageUrl); // Set preview image for update mode
           setIsUpdateMode(true);
         })
         .catch((error) => console.error('Error fetching venue:', error));
     }
   }, [id, apiUrl]);
 
-  // Handle form data changes
+  // Handle input changes for form data
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -53,7 +53,7 @@ const VenueForm = () => {
     }));
   };
 
-  // Handle multiple payment options selection
+  // Handle accepted payments changes (multiple select)
   const handlePaymentChange = (e) => {
     const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
     setFormData((prevData) => ({
@@ -66,14 +66,14 @@ const VenueForm = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImageFile(file);
-    
+
     // Display image preview
     const reader = new FileReader();
     reader.onloadend = () => setPreviewImage(reader.result);
     reader.readAsDataURL(file);
   };
 
-  // Validate form before submission
+  // Validate form inputs
   const validateForm = () => {
     const { venueName, occasionType, address } = formData;
     if (!venueName.trim() || !occasionType || !address.trim()) {
@@ -83,7 +83,7 @@ const VenueForm = () => {
     return true;
   };
 
-  // Submit the form (add or update venue)
+  // Submit form (add or update venue)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -95,19 +95,20 @@ const VenueForm = () => {
     try {
       let imageUrl = '';
 
-      // If image is selected, upload it first
+      // If an image file is selected, upload it first
       if (imageFile) {
-        const imageData = new FormData();
-        imageData.append('image', imageFile);
-        const imageResponse = await axios.post(`${apiUrl}/api/upload-image`, imageData);
-        imageUrl = imageResponse.data.imageUrl;
+        const formData = new FormData();
+        formData.append('image', imageFile);
+        const response = await axios.post(`${apiUrl}/api/upload-image`, formData);
+        imageUrl = response.data.imageUrl; // Get the image URL from the response
       } else {
-        imageUrl = previewImage; // Retain previous image URL if no new image is uploaded
+        imageUrl = previewImage; // If no new image is selected, use the existing image URL
       }
 
+      // Prepare data for submission
       const updatedData = { ...formData, imageUrl };
 
-      // Update or create venue based on mode
+      // Update or create venue based on whether we're in update mode
       if (isUpdateMode) {
         await axios.put(`${apiUrl}/api/venues/${id}`, updatedData);
         setMessage('Venue updated successfully!');
@@ -116,14 +117,14 @@ const VenueForm = () => {
         setMessage('Venue added successfully!');
       }
 
-      // Redirect to venue list after success
+      // Redirect after success
       setTimeout(() => navigate('/venues'), 2000);
     } catch (error) {
       console.error('Error saving/updating venue:', error);
       setMessage('An error occurred while saving the venue. Please try again.');
     } finally {
       setLoading(false);
-      setImageFile(null); // Clear file input after submission
+      setImageFile(null); // Clear the image file after submission
     }
   };
 
@@ -205,7 +206,7 @@ const VenueForm = () => {
         <label>Image:</label>
         <input type="file" accept="image/*" onChange={handleImageChange} />
 
-        {/* Display Image Preview */}
+        {/* Image Preview */}
         {previewImage && (
           <div className="image-preview">
             <img src={previewImage} alt="Preview" />
