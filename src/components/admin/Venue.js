@@ -33,7 +33,7 @@ const Venue = () => {
 
   return (
     <div className="venue-page-container">
-      <h1>Venues</h1>
+     
       {/* Display error message if there's an issue */}
       {error && <p className="error-message">{error}</p>}
 

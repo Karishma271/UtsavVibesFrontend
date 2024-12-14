@@ -7,6 +7,7 @@ const VenueForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // Form Data State
   const [formData, setFormData] = useState({
     occasionType: '',
     venueName: '',
@@ -14,52 +15,65 @@ const VenueForm = () => {
     address: '',
     capacity: '',
     acceptedPayments: [],
+    imageUrl: '', // Image URL for updating
   });
 
   const [imageFile, setImageFile] = useState(null);
-  const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null); // Image preview
+  const [isUpdateMode, setIsUpdateMode] = useState(false); // Determine if updating
   const [loading, setLoading] = useState(false); // Loading state
-  const [message, setMessage] = useState(''); // Success/error feedback message
+  const [message, setMessage] = useState(''); // Feedback message
 
+  // Dropdown options
   const occasionTypeOptions = ['Wedding', 'Birthday', 'Conference', 'Party'];
   const paymentOptions = ['Credit Card', 'Cash', 'PayPal', 'Bank Transfer'];
 
   const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com';
 
-  // Fetch venue details if updating
+  // Fetch venue details for update
   useEffect(() => {
     if (id) {
       axios
         .get(`${apiUrl}/api/venues/${id}`)
         .then((response) => {
           setFormData(response.data);
+          setPreviewImage(response.data.imageUrl); // Set image preview for update
           setIsUpdateMode(true);
         })
         .catch((error) => console.error('Error fetching venue:', error));
     }
   }, [id, apiUrl]);
 
+  // Handle form data changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
   };
 
+  // Handle multiple payment options selection
   const handlePaymentChange = (e) => {
     const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-    setFormData({
-      ...formData,
+    setFormData((prevData) => ({
+      ...prevData,
       acceptedPayments: selectedOptions,
-    });
+    }));
   };
 
+  // Handle image file selection and preview
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImageFile(file);
+    
+    // Display image preview
+    const reader = new FileReader();
+    reader.onloadend = () => setPreviewImage(reader.result);
+    reader.readAsDataURL(file);
   };
 
+  // Validate form before submission
   const validateForm = () => {
     const { venueName, occasionType, address } = formData;
     if (!venueName.trim() || !occasionType || !address.trim()) {
@@ -69,6 +83,7 @@ const VenueForm = () => {
     return true;
   };
 
+  // Submit the form (add or update venue)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -80,15 +95,16 @@ const VenueForm = () => {
     try {
       let imageUrl = '';
 
-      // If an image is uploaded, handle image upload first
+      // If image is selected, upload it first
       if (imageFile) {
         const imageData = new FormData();
         imageData.append('image', imageFile);
         const imageResponse = await axios.post(`${apiUrl}/api/upload-image`, imageData);
         imageUrl = imageResponse.data.imageUrl;
+      } else {
+        imageUrl = previewImage; // Retain previous image URL if no new image is uploaded
       }
 
-      // Prepare updated form data
       const updatedData = { ...formData, imageUrl };
 
       // Update or create venue based on mode
@@ -100,7 +116,7 @@ const VenueForm = () => {
         setMessage('Venue added successfully!');
       }
 
-      // Navigate back to the venue list after success
+      // Redirect to venue list after success
       setTimeout(() => navigate('/venues'), 2000);
     } catch (error) {
       console.error('Error saving/updating venue:', error);
@@ -119,7 +135,12 @@ const VenueForm = () => {
       <form className="venue-form" onSubmit={handleSubmit}>
         {/* Occasion Type */}
         <label>Occasion Type:</label>
-        <select name="occasionType" value={formData.occasionType} onChange={handleChange} required>
+        <select
+          name="occasionType"
+          value={formData.occasionType}
+          onChange={handleChange}
+          required
+        >
           <option value="">Select an occasion</option>
           {occasionTypeOptions.map((occasion) => (
             <option key={occasion} value={occasion}>
@@ -130,19 +151,40 @@ const VenueForm = () => {
 
         {/* Venue Name */}
         <label>Venue Name:</label>
-        <input type="text" name="venueName" value={formData.venueName} onChange={handleChange} required />
+        <input
+          type="text"
+          name="venueName"
+          value={formData.venueName}
+          onChange={handleChange}
+          required
+        />
 
         {/* Description */}
         <label>Description:</label>
-        <textarea name="description" value={formData.description} onChange={handleChange} />
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+        />
 
         {/* Address */}
         <label>Address:</label>
-        <input type="text" name="address" value={formData.address} onChange={handleChange} required />
+        <input
+          type="text"
+          name="address"
+          value={formData.address}
+          onChange={handleChange}
+          required
+        />
 
         {/* Capacity */}
         <label>Capacity:</label>
-        <input type="number" name="capacity" value={formData.capacity} onChange={handleChange} />
+        <input
+          type="number"
+          name="capacity"
+          value={formData.capacity}
+          onChange={handleChange}
+        />
 
         {/* Accepted Payments */}
         <label>Accepted Payments:</label>
@@ -162,6 +204,13 @@ const VenueForm = () => {
         {/* Image Upload */}
         <label>Image:</label>
         <input type="file" accept="image/*" onChange={handleImageChange} />
+
+        {/* Display Image Preview */}
+        {previewImage && (
+          <div className="image-preview">
+            <img src={previewImage} alt="Preview" />
+          </div>
+        )}
 
         {/* Submit Button */}
         <button className="save-btn" type="submit" disabled={loading}>
