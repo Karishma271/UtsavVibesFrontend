@@ -7,7 +7,6 @@ const VenueForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Form data state
   const [formData, setFormData] = useState({
     occasionType: '',
     venueName: '',
@@ -15,65 +14,61 @@ const VenueForm = () => {
     address: '',
     capacity: '',
     acceptedPayments: [],
-    imageUrl: '', // Store image URL for updating
   });
 
-  const [imageFile, setImageFile] = useState(null); // Selected image file
-  const [previewImage, setPreviewImage] = useState(null); // Image preview
-  const [isUpdateMode, setIsUpdateMode] = useState(false); // Track if we are in update mode
-  const [loading, setLoading] = useState(false); // Loading state for form submission
-  const [message, setMessage] = useState(''); // Feedback message
+  const [imageFile, setImageFile] = useState(null);
+  const [imageUrl, setImageUrl] = useState(''); // Store the uploaded image URL
+  const [isUpdateMode, setIsUpdateMode] = useState(false);
 
-  // Dropdown options
   const occasionTypeOptions = ['Wedding', 'Birthday', 'Conference', 'Party'];
   const paymentOptions = ['Credit Card', 'Cash', 'PayPal', 'Bank Transfer'];
 
-  const apiUrl = process.env.REACT_APP_BACKEND_URL || 'https://utsavvibesbackend.onrender.com';
-
-  // Fetch venue details for update (if in update mode)
+  // Fetch the venue data if it's in update mode
   useEffect(() => {
     if (id) {
       axios
-        .get(`${apiUrl}/api/venues/${id}`)
+        .get(`/api/venues/${id}`)
         .then((response) => {
           setFormData(response.data);
-          setPreviewImage(response.data.imageUrl); // Set preview image for update mode
+          setImageUrl(response.data.imageUrl || ''); // Set the existing image URL
           setIsUpdateMode(true);
         })
         .catch((error) => console.error('Error fetching venue:', error));
     }
-  }, [id, apiUrl]);
+  }, [id]);
 
-  // Handle input changes for form data
+  // Handle form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData({
+      ...formData,
       [name]: value,
-    }));
+    });
   };
 
-  // Handle accepted payments changes (multiple select)
+  // Handle payment method selection
   const handlePaymentChange = (e) => {
     const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData({
+      ...formData,
       acceptedPayments: selectedOptions,
-    }));
+    });
   };
 
-  // Handle image file selection and preview
+  // Handle image file change
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImageFile(file);
 
-    // Display image preview
+    // Display a preview of the selected image
     const reader = new FileReader();
-    reader.onloadend = () => setPreviewImage(reader.result);
-    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setImageUrl(reader.result); // Set image URL for preview
+    };
+    if (file) reader.readAsDataURL(file);
   };
 
-  // Validate form inputs
+  // Validate the form fields
   const validateForm = () => {
     const { venueName, occasionType, address } = formData;
     if (!venueName.trim() || !occasionType || !address.trim()) {
@@ -83,65 +78,48 @@ const VenueForm = () => {
     return true;
   };
 
-  // Submit form (add or update venue)
+  // Handle form submission (add/update venue)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
-    setLoading(true);
-    setMessage('');
-
     try {
-      let imageUrl = '';
+      let imageUrlToSend = imageUrl;
 
-      // If an image file is selected, upload it first
       if (imageFile) {
-        const formData = new FormData();
-        formData.append('image', imageFile);
-        const response = await axios.post(`${apiUrl}/api/upload-image`, formData);
-        imageUrl = response.data.imageUrl; // Get the image URL from the response
-      } else {
-        imageUrl = previewImage; // If no new image is selected, use the existing image URL
+        const imageData = new FormData();
+        imageData.append('image', imageFile);
+
+        const imageResponse = await axios.post('/api/upload-image', imageData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        imageUrlToSend = imageResponse.data.imageUrl; // Get the image URL from the backend
       }
 
-      // Prepare data for submission
-      const updatedData = { ...formData, imageUrl };
+      const updatedData = { ...formData, imageUrl: imageUrlToSend };
 
-      // Update or create venue based on whether we're in update mode
       if (isUpdateMode) {
-        await axios.put(`${apiUrl}/api/venues/${id}`, updatedData);
-        setMessage('Venue updated successfully!');
+        await axios.put(`/api/venues/${id}`, updatedData); // Update venue if in update mode
       } else {
-        await axios.post(`${apiUrl}/api/venues`, updatedData);
-        setMessage('Venue added successfully!');
+        await axios.post('/api/venues', updatedData); // Add new venue if in add mode
       }
 
-      // Redirect after success
-      setTimeout(() => navigate('/venues'), 2000);
+      navigate('/venues'); // Navigate back to the venue list page
     } catch (error) {
       console.error('Error saving/updating venue:', error);
-      setMessage('An error occurred while saving the venue. Please try again.');
-    } finally {
-      setLoading(false);
-      setImageFile(null); // Clear the image file after submission
     }
   };
 
   return (
-    <div className="venue-form-container">
+    <div className="organizer-form-container">
       <h2>{isUpdateMode ? 'Update Venue' : 'Add Venue'}</h2>
-      {message && <p className="form-message">{message}</p>}
-
-      <form className="venue-form" onSubmit={handleSubmit}>
-        {/* Occasion Type */}
+      <form className="organizer-form" onSubmit={handleSubmit}>
         <label>Occasion Type:</label>
-        <select
-          name="occasionType"
-          value={formData.occasionType}
-          onChange={handleChange}
-          required
-        >
+        <select name="occasionType" value={formData.occasionType} onChange={handleChange} required>
           <option value="">Select an occasion</option>
           {occasionTypeOptions.map((occasion) => (
             <option key={occasion} value={occasion}>
@@ -150,7 +128,6 @@ const VenueForm = () => {
           ))}
         </select>
 
-        {/* Venue Name */}
         <label>Venue Name:</label>
         <input
           type="text"
@@ -160,7 +137,6 @@ const VenueForm = () => {
           required
         />
 
-        {/* Description */}
         <label>Description:</label>
         <textarea
           name="description"
@@ -168,7 +144,6 @@ const VenueForm = () => {
           onChange={handleChange}
         />
 
-        {/* Address */}
         <label>Address:</label>
         <input
           type="text"
@@ -178,7 +153,6 @@ const VenueForm = () => {
           required
         />
 
-        {/* Capacity */}
         <label>Capacity:</label>
         <input
           type="number"
@@ -187,7 +161,6 @@ const VenueForm = () => {
           onChange={handleChange}
         />
 
-        {/* Accepted Payments */}
         <label>Accepted Payments:</label>
         <select
           multiple
@@ -202,20 +175,17 @@ const VenueForm = () => {
           ))}
         </select>
 
-        {/* Image Upload */}
         <label>Image:</label>
         <input type="file" accept="image/*" onChange={handleImageChange} />
 
-        {/* Image Preview */}
-        {previewImage && (
+        {imageUrl && (
           <div className="image-preview">
-            <img src={previewImage} alt="Preview" />
+            <img src={imageUrl} alt="Preview" className="preview-img" />
           </div>
         )}
 
-        {/* Submit Button */}
-        <button className="save-btn" type="submit" disabled={loading}>
-          {loading ? 'Please wait...' : isUpdateMode ? 'Update Venue' : 'Add Venue'}
+        <button className="save-btn" type="submit">
+          {isUpdateMode ? 'Update Venue' : 'Add Venue'}
         </button>
       </form>
     </div>
