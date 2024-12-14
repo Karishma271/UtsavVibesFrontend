@@ -40,17 +40,11 @@ const VenueList = () => {
         {venues.length > 0 ? (
           venues.map((venue) => (
             <div className="fpItem" key={venue._id}>
-             <Link to={`/venue/${venue._id}`}>
-                {/* Use imageUrl */}
-                {venue.imageUrl ? (
-                  <img
-                    src={venue.imageUrl} // Directly use Google-hosted URL
-                    alt={venue.venueName}
-                    className="venueImage" // Add class for styling if needed
-                  />
-                ) : (
-                  <div className="noImage">No Image Available</div> // Fallback
-                )}
+              <Link to={`/fhalls/${venue._id}`}>
+                <img src={venue.imageUrl} alt={venue.venueName} 
+                 
+                  
+                />
               </Link>
               <span className="fpName">{venue.venueName}</span>
               <span className="fpCity">

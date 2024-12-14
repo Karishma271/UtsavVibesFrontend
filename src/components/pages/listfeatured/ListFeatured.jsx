@@ -25,7 +25,11 @@ const ListFeatured = () => {
                 </div>
                 <div className="hallImages">
                     <div className="hallImgWrapper">
-                        <img src={data.imageUrl} alt="Venue" className="hallImg" />
+                    <img
+              src={data.imageUrl } 
+              alt="Venue"
+              className="hallImg"
+            />
                     </div>
                 </div>
                 <span className="fpName">{data.capacity} <GroupsIcon/></span>
