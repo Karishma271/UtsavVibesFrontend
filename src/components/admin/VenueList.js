@@ -20,12 +20,12 @@ const VenueList = ({ venues, setVenues }) => {
         );
   
         // Check if the response status indicates success
-        if (response.status === 200) {
+        //if (response.status === 200) {
           // Update local venues state without page reload
-          setVenues((prevVenues) => prevVenues.filter((venue) => venue._id !== id));
-        } else {
-          throw new Error("Failed to delete venue");
-        }
+          //setVenues((prevVenues) => prevVenues.filter((venue) => venue._id !== id));
+        //} else {
+          //throw new Error("Failed to delete venue");
+        //}
       } catch (error) {
         console.error("Error deleting venue:", error);
         alert("Failed to delete the venue. Please try again.");
