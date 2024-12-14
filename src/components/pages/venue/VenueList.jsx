@@ -40,13 +40,7 @@ const VenueList = () => {
         {venues.length > 0 ? (
           venues.map((venue) => (
             <div className="fpItem" key={venue._id}>
-             <Link to={`/fhalls/${venue._id}`}>
-             <img 
-        src={venue.imageUrl}  
-        alt={venue.venueName} 
-        className="venueImage"
-      />
-              </Link>
+             
               <span className="fpName">{venue.venueName}</span>
               <span className="fpCity">
                 <LocationOnIcon /> {venue.address}
