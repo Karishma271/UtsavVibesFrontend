@@ -40,8 +40,17 @@ const VenueList = () => {
         {venues.length > 0 ? (
           venues.map((venue) => (
             <div className="fpItem" key={venue._id}>
-              <Link to={`/fhalls/${venue._id}`}>
-              
+             <Link to={`/fhalls/${venue._id}`}>
+                {/* Check if imageUrl is available */}
+                {venue.imageUrl ? (
+                  <img
+                    src={venue.imageUrl} // Use the provided image URL
+                    alt={venue.venueName}
+                    className="venueImage" // Add class for styling if needed
+                  />
+                ) : (
+                  <div className="noImage">No Image Available</div> // Fallback text
+                )}
               </Link>
               <span className="fpName">{venue.venueName}</span>
               <span className="fpCity">
